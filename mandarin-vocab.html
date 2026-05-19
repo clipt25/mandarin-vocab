@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<title>发展汉语 — Vocabulary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Crimson Pro', Georgia, serif;
+  background: #0e0d0b;
+  color: #e8e2d9;
+  min-height: 100vh;
+}
+
+/* ── Layout ── */
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.02);
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+.sidebar-title {
+  padding: 24px 20px 16px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #6b5e45;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar-title strong {
+  display: block;
+  font-family: 'Noto Serif JP', serif;
+  font-size: 18px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #c8b99a;
+  margin-bottom: 4px;
+}
+.chapter-list {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3228 #0e0d0b;
+}
+.chapter-list li button {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #7a6f5e;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 14px;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  border-left: 2px solid transparent;
+}
+.chapter-list li button:hover {
+  background: rgba(255,255,255,0.03);
+  color: #c8b99a;
+}
+.chapter-list li.active button {
+  color: #c8b99a;
+  border-left-color: #a89880;
+  background: rgba(168,152,128,0.08);
+}
+.ch-num {
+  font-size: 11px;
+  background: rgba(107,94,69,0.3);
+  color: #7a6f5e;
+  border-radius: 3px;
+  padding: 1px 6px;
+  min-width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.chapter-list li.active .ch-num {
+  background: #a89880;
+  color: #3a2e1e;
+}
+.ch-name {
+  flex: 1;
+  line-height: 1.3;
+}
+.ch-name small {
+  display: block;
+  font-size: 11px;
+  color: #5a5040;
+  margin-top: 1px;
+}
+.chapter-list li.active .ch-name small { color: #8a7a60; }
+.ch-count {
+  font-size: 11px;
+  color: #4a4030;
+}
+
+/* ── Main ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px 64px;
+  min-height: 100vh;
+}
+
+/* ── Top bar ── */
+.top-bar {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+.site-label {
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #4a4030;
+}
+.counter {
+  font-size: 13px;
+  color: #6b5e45;
+  letter-spacing: 0.05em;
+}
+
+/* ── Card ── */
+.card {
+  width: 100%;
+  max-width: 480px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 2px;
+  background: rgba(255,255,255,0.02);
+  container-type: inline-size;
+  padding: 32px 32px 28px;
+}
+
+/* Chapter badge */
+.chapter-badge {
+  display: inline-block;
+  background-color: rgba(168,152,128,0.15);
+  color: #6b5e45;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 2px;
+  margin-bottom: 24px;
+}
+
+/* Hanzi */
+.hanzi {
+  font-family: 'Noto Serif JP', serif;
+  font-size: min(12cqi, 6rem);
+  font-weight: 300;
+  color: #f0ebe0;
+  line-height: 1.1;
+  margin-bottom: 28px;
+  word-break: keep-all;
+}
+
+/* Reveal sections */
+.reveal-section {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.35s ease;
+}
+.reveal-section.open {
+  max-height: 9999px;
+  opacity: 1;
+}
+
+/* Pinyin */
+.pinyin {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: #a89880;
+  margin-bottom: 24px;
+  letter-spacing: 0.02em;
+}
+
+/* Details section */
+.pos-label {
+  font-size: 11px;
+  color: #7a6f5e;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+}
+.meaning {
+  font-size: 1.25rem;
+  color: #c8b99a;
+  font-weight: 300;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+/* Examples */
+.examples-label {
+  font-size: 11px;
+  color: #6b5e45;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 12px;
+}
+.example-block {
+  border-left: 1px solid rgba(107,94,69,0.35);
+  padding-left: 12px;
+  margin-bottom: 12px;
+}
+.example-zh {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.6rem;
+  color: #a89880;
+  line-height: 3;
+  margin-bottom: 4px;
+}
+.example-zh ruby rt {
+  font-size: 0.6em;
+  color: #7a6f5e;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-style: normal;
+  letter-spacing: 0.02em;
+}
+.example-zh .ex-word {
+  font-weight: 600;
+  color: #e8dcc8;
+}
+.example-en {
+  font-style: italic;
+  font-size: 1.15rem;
+  color: #7a6f5e;
+  line-height: 1.6;
+}
+
+/* Buttons area */
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+/* Ghost button */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(200,185,154,0.25);
+  color: #8a7f6e;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 0.9rem;
+  padding: 7px 18px;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-ghost:hover {
+  border-color: rgba(200,185,154,0.5);
+  color: #c8b99a;
+}
+.btn-ghost.active {
+  border-color: rgba(168,152,128,0.5);
+  color: #a89880;
+}
+
+/* Filled button (prev/next) */
+.btn-fill {
+  background: #c8b99a;
+  color: #0e0d0b;
+  border: none;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  padding: 9px 22px;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: background 0.2s;
+}
+.btn-fill:hover { background: #d8c9aa; }
+.btn-fill:disabled { background: #2a2820; color: #4a4030; cursor: default; }
+
+/* Nav row */
+.nav-row {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+.nav-progress {
+  font-size: 13px;
+  color: #4a4030;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: rgba(255,255,255,0.05);
+  margin: 20px 0;
+}
+
+/* ── Speaker button ── */
+.btn-speak {
+  background: none;
+  border: 1px solid rgba(200,185,154,0.25);
+  color: #6b5e45;
+  width: 36px;
+  height: 36px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: border-color 0.2s, color 0.2s;
+  vertical-align: middle;
+}
+.btn-speak:hover { border-color: rgba(200,185,154,0.5); color: #c8b99a; }
+.btn-speak.speaking { border-color: #a89880; color: #a89880; animation: pulse 0.8s ease-in-out infinite alternate; }
+@keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
+body.light .btn-speak { border-color: rgba(100,70,40,0.3); color: #7a5830; }
+body.light .btn-speak:hover { border-color: rgba(100,70,40,0.6); color: #3a1e00; }
+body.light .btn-speak.speaking { border-color: #8a6040; color: #8a6040; }
+
+/* ── Japanese section ── */
+.japanese-word {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.55rem;
+  color: #d4a0a0;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.japanese-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #9a6a6a;
+  margin-bottom: 10px;
+}
+body.light .japanese-word { color: #a04040; }
+body.light .japanese-label { color: #8a4040; }
+
+/* ── Mode toggle button ── */
+.btn-mode {
+  background: none;
+  border: 1px solid rgba(200,185,154,0.25);
+  color: #6b5e45;
+  font-size: 13px;
+  width: 28px;
+  height: 28px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: border-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+.btn-mode:hover { border-color: rgba(200,185,154,0.5); color: #c8b99a; }
+
+/* ── Mode switcher ── */
+.mode-switcher {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 3px;
+}
+.mode-btn {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: background 150ms, color 150ms;
+  white-space: nowrap;
+  min-height: 30px;
+}
+.mode-btn.active  { background: #c8b99a; color: #0e0d0b; }
+.mode-btn.inactive { background: transparent; color: #6b5e45; }
+.mode-btn.inactive:hover { color: #a89880; background: rgba(255,255,255,0.04); }
+body.light .mode-btn.active   { background: #8a6040; color: #f5efe3; }
+body.light .mode-btn.inactive { color: #b09070; }
+
+/* ── Light mode ── */
+body.light {
+  background: #f5efe3;
+  color: #2a1e0a;
+}
+body.light .sidebar {
+  background: #ece5d8;
+  border-right-color: rgba(0,0,0,0.08);
+  scrollbar-color: #c8b89a #ece5d8;
+}
+body.light .sidebar-title { color: #7a6040; border-bottom-color: rgba(0,0,0,0.08); }
+body.light .sidebar-title strong { color: #2a1e0a; }
+body.light .chapter-list { scrollbar-color: #c8b89a #ece5d8; }
+body.light .chapter-list li button { color: #6a5030; }
+body.light .chapter-list li button:hover { background: rgba(0,0,0,0.04); color: #2a1e0a; }
+body.light .chapter-list li.active button { color: #2a1e0a; border-left-color: #8a6040; background: rgba(138,96,64,0.1); }
+body.light .ch-num { background: rgba(100,70,40,0.12); color: #7a5030; }
+body.light .chapter-list li.active .ch-num { background: #8a6040; color: #f5efe3; }
+body.light .ch-name small { color: #9a8060; }
+body.light .chapter-list li.active .ch-name small { color: #6a4020; }
+body.light .ch-count { color: #9a8060; }
+body.light .site-label { color: #9a8060; }
+body.light .counter { color: #7a6040; }
+body.light .card { border-color: rgba(0,0,0,0.1); background: rgba(0,0,0,0.02); }
+body.light .chapter-badge { background-color: rgba(100,70,40,0.1); color: #7a5030; }
+body.light .hanzi { color: #1a0e00; }
+body.light .pinyin { color: #8a6040; }
+body.light .pos-label { color: #8a7050; }
+body.light .meaning { color: #4a3010; }
+body.light .examples-label { color: #8a6040; }
+body.light .example-block { border-left-color: rgba(100,70,40,0.25); }
+body.light .example-zh { color: #7a5530; }
+body.light .example-zh ruby rt { color: #a08060; }
+body.light .example-zh .ex-word { color: #1a0e00; }
+body.light .example-en { color: #8a6a40; }
+body.light .btn-ghost { border-color: rgba(100,70,40,0.3); color: #7a5830; }
+body.light .btn-ghost:hover { border-color: rgba(100,70,40,0.6); color: #3a1e00; }
+body.light .btn-ghost.active { border-color: rgba(100,70,40,0.7); color: #5a3a10; }
+body.light .btn-fill { background: #8a6040; color: #f5efe3; }
+body.light .btn-fill:hover { background: #7a5030; }
+body.light .btn-fill:disabled { background: #d8d0c0; color: #9a9080; }
+body.light .nav-progress { color: #9a8060; }
+body.light .divider { background: rgba(0,0,0,0.07); }
+body.light .btn-mode { border-color: rgba(100,70,40,0.3); color: #7a5830; }
+body.light .btn-mode:hover { border-color: rgba(100,70,40,0.6); color: #3a1e00; }
+
+/* ── Word list panel ── */
+.word-panel {
+  width: 185px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.012);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+.word-panel-title {
+  padding: 16px 14px 10px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #5a5040;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.word-list {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3228 transparent;
+  padding: 6px 0;
+}
+.word-list li button {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 5px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  color: #5a5040;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 13px;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+  border-left: 2px solid transparent;
+  line-height: 1.4;
+}
+.word-list li button:hover { background: rgba(255,255,255,0.03); color: #a89878; }
+.word-list li.active button {
+  color: #c8b89a;
+  border-left-color: #7a6a50;
+  background: rgba(255,255,255,0.04);
+}
+.wl-hz { font-family: 'Noto Serif JP', serif; font-size: 14px; }
+.wl-py { font-size: 10.5px; color: #4a4030; letter-spacing: 0.01em; }
+.word-list li.active .wl-py { color: #8a7860; }
+body.light .word-panel { background: rgba(0,0,0,0.01); border-right-color: rgba(0,0,0,0.06); }
+body.light .word-panel-title { color: #9a8060; }
+body.light .word-list li button { color: #9a8060; }
+body.light .word-list li button:hover { background: rgba(0,0,0,0.03); color: #4a3010; }
+body.light .word-list li.active button { color: #2a1a00; border-left-color: #8a6040; background: rgba(138,96,64,0.08); }
+body.light .wl-py { color: #b0906a; }
+body.light .word-list li.active .wl-py { color: #7a5030; }
+
+/* ── Interlinear word gloss ── */
+.gloss-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.gloss-token {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.gloss-hz { font-family: 'Noto Serif JP', serif; font-size: 1.25rem; color: #b8a888; }
+.gloss-py { font-size: 0.8rem; color: #6a6050; }
+.gloss-en { font-size: 0.78rem; color: #8a7a60; font-style: italic; text-align: center; max-width: 90px; }
+body.light .gloss-row { border-top-color: rgba(0,0,0,0.06); }
+body.light .gloss-hz { color: #4a3010; }
+body.light .gloss-py { color: #8a6040; }
+body.light .gloss-en { color: #6a4820; }
+
+/* ── Hamburger button (mobile only) ── */
+.btn-hamburger {
+  display: none;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 3px;
+  color: #a89878;
+  font-size: 18px;
+  line-height: 1;
+  padding: 5px 9px;
+  cursor: pointer;
+}
+.btn-hamburger:hover { border-color: rgba(255,255,255,0.25); color: #c8b89a; }
+body.light .btn-hamburger { border-color: rgba(100,70,40,0.3); color: #7a5830; }
+
+/* ── Mobile chapter drawer ── */
+.mobile-drawer {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+}
+.mobile-drawer.open { display: block; }
+.drawer-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+}
+.drawer-panel {
+  position: absolute;
+  top: 0; left: 0;
+  width: min(320px, 88vw);
+  height: 100%;
+  background: #161510;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.26s cubic-bezier(0.4,0,0.2,1);
+}
+.mobile-drawer.open .drawer-panel { transform: translateX(0); }
+.drawer-header {
+  padding: 22px 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.drawer-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 17px;
+  color: #c8b89a;
+}
+.drawer-subtitle { font-size: 11px; letter-spacing: 0.12em; color: #6b5e45; margin-top: 2px; }
+.btn-drawer-close {
+  background: none;
+  border: none;
+  color: #7a6f5e;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 1;
+}
+.drawer-chapter-list {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 0 24px;
+  -webkit-overflow-scrolling: touch;
+}
+.drawer-chapter-list li button {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 11px 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #7a6f5e;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 15px;
+  text-align: left;
+  border-left: 2px solid transparent;
+  transition: background 0.12s, color 0.12s;
+}
+.drawer-chapter-list li button:hover { background: rgba(255,255,255,0.04); color: #b0a080; }
+.drawer-chapter-list li.active button { color: #c8b89a; border-left-color: #7a6a50; background: rgba(255,255,255,0.04); }
+body.light .drawer-panel { background: #f2ebe0; border-right-color: rgba(0,0,0,0.08); }
+body.light .drawer-chapter-list li button { color: #9a8060; }
+body.light .drawer-chapter-list li button:hover { background: rgba(0,0,0,0.04); color: #4a3010; }
+body.light .drawer-chapter-list li.active button { color: #2a1a00; border-left-color: #8a6040; background: rgba(138,96,64,0.08); }
+.drawer-chapter-list .wl-hz { font-family: 'Noto Serif JP', serif; font-size: 17px; }
+.drawer-chapter-list .wl-py { font-size: 13px; color: #5a5040; }
+.drawer-chapter-list li.active .wl-py { color: #8a7860; }
+
+/* ── Mobile ── */
+@media (max-width: 900px) {
+  .word-panel { display: none; }
+}
+@media (max-width: 700px) {
+  .sidebar { display: none; }
+  .btn-hamburger { display: inline-block; }
+  .main { padding: 22px 16px 60px; }
+  .card { padding: 24px 18px 22px; }
+  .top-bar { margin-bottom: 20px; }
+  .hanzi { font-size: 3.2rem; }
+  .btn-row { gap: 8px; }
+  .btn-ghost { font-size: 13px; padding: 8px 14px; }
+  .nav-row { margin-top: 20px; }
+  .gloss-row { gap: 6px 16px; }
+  .gloss-hz { font-size: 1.1rem; }
+  .gloss-py { font-size: 0.72rem; }
+  .gloss-en { font-size: 0.7rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-title">
+      <strong>发展汉语</strong>
+      Elementary Speaking I
+    </div>
+    <ul class="chapter-list" id="chapterList"></ul>
+  </aside>
+
+  <!-- Word list panel -->
+  <aside class="word-panel">
+    <div class="word-panel-title" id="wordPanelTitle">Chapter 1</div>
+    <ul class="word-list" id="wordList"></ul>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="top-bar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn-hamburger" onclick="openDrawer()" title="All chapters">&#9776;</button>
+        <button class="btn-hamburger btn-wordlist" onclick="openWordDrawer()" title="Words in this chapter">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+        </button>
+        <div class="mode-switcher">
+          <span class="mode-btn active">Flashcards</span>
+          <a class="mode-btn inactive" href="./mandarin-quiz.html">Quiz</a>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="btn-mode" id="btnMode" onclick="toggleMode()" title="Toggle light/dark">☀</button>
+        <span class="counter" id="counter">1 of 1</span>
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div class="card" id="card">
+      <div class="chapter-badge" id="chapterBadge">Chapter 1</div>
+      <div class="hanzi" id="hanzi">你好</div>
+
+      <div class="btn-row">
+        <button class="btn-ghost" id="btnReading" onclick="toggleReading()">show reading</button>
+        <button class="btn-ghost" id="btnDetails" onclick="toggleDetails()">show details</button>
+        <button class="btn-ghost" id="btnJapanese" onclick="toggleJapanese()">Japanese</button>
+      </div>
+
+      <!-- Pinyin reveal -->
+      <div class="reveal-section" id="readingSection">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:24px">
+          <div class="pinyin" style="margin-bottom:0" id="pinyin">nǐ hǎo</div>
+          <button class="btn-speak" id="btnSpeak" onclick="speakCurrent()" title="Listen to pronunciation">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Details reveal -->
+      <div class="reveal-section" id="detailsSection">
+        <div class="divider"></div>
+        <div class="pos-label" id="pos">phrase</div>
+        <div class="meaning" id="meaning">Hello</div>
+        <div class="examples-label">Example</div>
+        <div id="examples"></div>
+      </div>
+
+      <!-- Japanese reveal -->
+      <div class="reveal-section" id="japaneseSection">
+        <div class="divider"></div>
+        <div class="japanese-label">🇯🇵 Japanese Equivalent</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="japanese-word" id="japaneseWord">ー</div>
+          <button class="btn-speak" id="btnSpeakJa" onclick="speakJapanese()" title="Listen in Japanese">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <div class="nav-row">
+      <button class="btn-fill" id="btnPrev" onclick="prevCard()">← prev</button>
+      <span class="nav-progress" id="navProgress">1 / 7</span>
+      <button class="btn-fill" id="btnNext" onclick="nextCard()">next →</button>
+    </div>
+  </main>
+</div>
+
+<!-- Mobile word list drawer -->
+<div class="mobile-drawer" id="wordDrawer">
+  <div class="drawer-overlay" onclick="closeWordDrawer()"></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-title" id="wordDrawerTitle">Chapter 11</div>
+        <div class="drawer-subtitle">WORDS IN THIS CHAPTER</div>
+      </div>
+      <button class="btn-drawer-close" onclick="closeWordDrawer()">✕</button>
+    </div>
+    <ul class="drawer-chapter-list" id="wordDrawerList"></ul>
+  </div>
+</div>
+
+<!-- Mobile chapter drawer -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <div class="drawer-overlay" onclick="closeDrawer()"></div>
+  <div class="drawer-panel">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-title">发展汉语</div>
+        <div class="drawer-subtitle">ELEMENTARY SPEAKING I</div>
+      </div>
+      <button class="btn-drawer-close" onclick="closeDrawer()">✕</button>
+    </div>
+    <ul class="drawer-chapter-list" id="drawerChapterList"></ul>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  VOCABULARY DATA  —  Developing Chinese Elementary Speaking I
+//  { h: hanzi, p: pinyin, pos: part-of-speech, m: meaning,
+//    ex: example Chinese sentence, exm: example English }
+// ═══════════════════════════════════════════════════════════════
+const CHAPTERS = [
+  {
+    num: 1, zh: "你好", en: "Hello",
+    words: [
+      { h:"你", p:"nǐ", pos:"pron.", m:"you", ex:"你好吗？", exm:"How are you?" },
+      { h:"好", p:"hǎo", pos:"adj.", m:"good, well, ok", ex:"他汉语说得很好。", exm:"He speaks Chinese very well." },
+      { h:"老师", p:"lǎoshī", pos:"n.", m:"teacher", ex:"我们老师是中国人。", exm:"Our teacher is Chinese." },
+      { h:"您", p:"nín", pos:"pron.", m:"you (respectful form)", ex:"您贵姓？", exm:"May I ask your surname?" },
+      { h:"你们", p:"nǐmen", pos:"pron.", m:"you (plural)", ex:"你们都是学生吗？", exm:"Are you all students?" },
+      { h:"们", p:"men", pos:"suf.", m:"plural suffix for pronouns/people", ex:"同学们，上课了。", exm:"Students, class is starting." },
+      { h:"再见", p:"zàijiàn", pos:"v.", m:"good-bye, see you again", ex:"明天见，再见！", exm:"See you tomorrow, goodbye!" },
+    ]
+  },
+  {
+    num: 2, zh: "谢谢", en: "Thank You",
+    words: [
+      { h:"早上", p:"zǎoshang", pos:"n.", m:"morning", ex:"早上我七点起床。", exm:"I get up at 7 in the morning." },
+      { h:"谢谢", p:"xièxie", pos:"v.", m:"thank you", ex:"谢谢你帮助我！", exm:"Thank you for helping me!" },
+      { h:"不客气", p:"bú kèqi", pos:"phrase", m:"you're welcome, don't mention it", ex:"谢谢！—不客气！", exm:"Thank you! — You're welcome!" },
+      { h:"对不起", p:"duìbuqǐ", pos:"phrase", m:"sorry, I'm sorry", ex:"对不起，我来晚了。", exm:"Sorry, I'm late." },
+      { h:"没关系", p:"méi guānxi", pos:"phrase", m:"it doesn't matter, never mind", ex:"没关系，你慢慢来。", exm:"Never mind, take your time." },
+    ]
+  },
+  {
+    num: 3, zh: "今天星期一", en: "Today is Monday",
+    words: [
+      { h:"今天", p:"jīntiān", pos:"n.", m:"today", ex:"今天是星期一。", exm:"Today is Monday." },
+      { h:"明天", p:"míngtiān", pos:"n.", m:"tomorrow", ex:"明天我没有课。", exm:"I don't have class tomorrow." },
+      { h:"星期一", p:"xīngqīyī", pos:"n.", m:"Monday", ex:"我星期一有汉语课。", exm:"I have Chinese class on Monday." },
+      { h:"星期二", p:"xīngqīèr", pos:"n.", m:"Tuesday", ex:"星期二我们去图书馆。", exm:"We go to the library on Tuesday." },
+      { h:"星期六", p:"xīngqīliù", pos:"n.", m:"Saturday", ex:"星期六我们去逛街。", exm:"We go shopping on Saturday." },
+      { h:"星期日", p:"xīngqīrì", pos:"n.", m:"Sunday", ex:"星期日他在家休息。", exm:"He rests at home on Sunday." },
+      { h:"月", p:"yuè", pos:"n.", m:"month", ex:"你的生日是几月？", exm:"Which month is your birthday?" },
+      { h:"日/号", p:"rì / hào", pos:"n.", m:"day (of the month), date", ex:"今天几号？", exm:"What is today's date?" },
+      { h:"八", p:"bā", pos:"num.", m:"eight", ex:"我们班有八个男生。", exm:"There are eight boys in our class." },
+      { h:"九", p:"jiǔ", pos:"num.", m:"nine", ex:"他家有九口人。", exm:"His family has nine people." },
+    ]
+  },
+  {
+    num: 4, zh: "我是中国人", en: "I'm Chinese",
+    words: [
+      { h:"我", p:"wǒ", pos:"pron.", m:"I, me", ex:"我是学生。", exm:"I am a student." },
+      { h:"我们", p:"wǒmen", pos:"pron.", m:"we, us", ex:"我们都是留学生。", exm:"We are all international students." },
+      { h:"他", p:"tā", pos:"pron.", m:"he, him", ex:"他是我的朋友。", exm:"He is my friend." },
+      { h:"是", p:"shì", pos:"v.", m:"to be", ex:"我是中国人。", exm:"I am Chinese." },
+      { h:"姓", p:"xìng", pos:"v.", m:"to be surnamed; surname", ex:"我姓王，叫王明。", exm:"My surname is Wang, my name is Wang Ming." },
+      { h:"叫", p:"jiào", pos:"v.", m:"to be called (name)", ex:"你叫什么名字？", exm:"What is your name?" },
+      { h:"认识", p:"rènshi", pos:"v.", m:"to know (a person), to meet", ex:"认识你，很高兴！", exm:"Nice to meet you!" },
+      { h:"人", p:"rén", pos:"n.", m:"person, people", ex:"那个人是谁？", exm:"Who is that person?" },
+      { h:"朋友", p:"péngyou", pos:"n.", m:"friend", ex:"他是我的好朋友。", exm:"He is my good friend." },
+      { h:"高兴", p:"gāoxìng", pos:"adj.", m:"happy, glad, pleased", ex:"认识你，我很高兴。", exm:"I'm very glad to meet you." },
+      { h:"很", p:"hěn", pos:"adv.", m:"very, quite", ex:"她汉语说得很好。", exm:"She speaks Chinese very well." },
+      { h:"也", p:"yě", pos:"adv.", m:"also, too, as well", ex:"我也是学生。", exm:"I am also a student." },
+    ]
+  },
+  {
+    num: 5, zh: "我学习汉语", en: "I Study Chinese",
+    words: [
+      { h:"她", p:"tā", pos:"pron.", m:"she, her", ex:"她是我的老师。", exm:"She is my teacher." },
+      { h:"哪", p:"nǎ", pos:"pron.", m:"which", ex:"你是哪国人？", exm:"Which country are you from?" },
+      { h:"什么", p:"shénme", pos:"pron.", m:"what", ex:"这是什么？", exm:"What is this?" },
+      { h:"谁", p:"shéi / shuí", pos:"pron.", m:"who", ex:"那个人是谁？", exm:"Who is that person?" },
+      { h:"呢", p:"ne", pos:"part.", m:"particle (question / what about?)", ex:"我很好，你呢？", exm:"I'm fine, and you?" },
+      { h:"吗", p:"ma", pos:"part.", m:"question particle (yes/no)", ex:"你是学生吗？", exm:"Are you a student?" },
+      { h:"不", p:"bù", pos:"adv.", m:"not, no", ex:"我不是中国人。", exm:"I am not Chinese." },
+      { h:"学习", p:"xuéxí", pos:"v.", m:"to study, to learn", ex:"我学习汉语。", exm:"I study Chinese." },
+      { h:"学生", p:"xuésheng", pos:"n.", m:"student", ex:"我们都是大学生。", exm:"We are all university students." },
+      { h:"汉语", p:"Hànyǔ", pos:"n.", m:"Chinese language (Mandarin)", ex:"你的汉语说得很好！", exm:"Your Chinese is very good!" },
+      { h:"国", p:"guó", pos:"n.", m:"country, nation", ex:"你是哪个国的人？", exm:"What country are you from?" },
+      { h:"经济", p:"jīngjì", pos:"n.", m:"economy; economics", ex:"他学习经济学。", exm:"He studies economics." },
+      { h:"名字", p:"míngzi", pos:"n.", m:"name", ex:"你的名字叫什么？", exm:"What is your name?" },
+    ]
+  },
+  {
+    num: 6, zh: "你们班有多少人", en: "How Many People Are in Your Class",
+    words: [
+      { h:"有", p:"yǒu", pos:"v.", m:"to have; there is/are", ex:"我有一个哥哥。", exm:"I have an older brother." },
+      { h:"没（有）", p:"méi(yǒu)", pos:"v.", m:"not have; there is no", ex:"我没有妹妹。", exm:"I don't have a younger sister." },
+      { h:"多少", p:"duōshao", pos:"pron.", m:"how many, how much", ex:"你们班有多少人？", exm:"How many people are in your class?" },
+      { h:"几", p:"jǐ", pos:"pron.", m:"how many (small number, <10)", ex:"你家有几口人？", exm:"How many people are in your family?" },
+      { h:"和", p:"hé", pos:"conj.", m:"and, with", ex:"我和朋友一起学习。", exm:"I study together with my friend." },
+      { h:"还", p:"hái", pos:"adv.", m:"still, also, in addition", ex:"我还有一个妹妹。", exm:"I also have a younger sister." },
+      { h:"对", p:"duì", pos:"adj.", m:"correct, right", ex:"对，你说得对。", exm:"Right, you're correct." },
+      { h:"班", p:"bān", pos:"n.", m:"class (of students)", ex:"我们班有十五个人。", exm:"There are fifteen people in our class." },
+      { h:"家", p:"jiā", pos:"n.", m:"home, family; house", ex:"我家有四口人。", exm:"My family has four people." },
+      { h:"哥哥", p:"gēge", pos:"n.", m:"elder brother", ex:"我哥哥是大学生。", exm:"My older brother is a university student." },
+      { h:"姐姐", p:"jiějie", pos:"n.", m:"elder sister", ex:"我姐姐在北京工作。", exm:"My older sister works in Beijing." },
+      { h:"妹妹", p:"mèimei", pos:"n.", m:"younger sister", ex:"我妹妹今年十岁。", exm:"My younger sister is ten years old." },
+      { h:"男生", p:"nánshēng", pos:"n.", m:"male student; boy", ex:"我们班有六个男生。", exm:"There are six male students in our class." },
+      { h:"女生", p:"nǚshēng", pos:"n.", m:"female student; girl", ex:"我们班有九个女生。", exm:"There are nine female students in our class." },
+      { h:"个", p:"gè", pos:"m.", m:"(general measure word)", ex:"我有两个好朋友。", exm:"I have two good friends." },
+      { h:"口", p:"kǒu", pos:"m.", m:"(measure word for family members)", ex:"我家有五口人。", exm:"My family has five people." },
+    ]
+  },
+  {
+    num: 7, zh: "一共多少钱", en: "How Much Altogether",
+    words: [
+      { h:"买", p:"mǎi", pos:"v.", m:"to buy", ex:"我想买一瓶水。", exm:"I want to buy a bottle of water." },
+      { h:"卖", p:"mài", pos:"v.", m:"to sell", ex:"这里卖水果吗？", exm:"Do they sell fruit here?" },
+      { h:"想", p:"xiǎng", pos:"v.", m:"to want; to think; to miss", ex:"我想买一斤梨。", exm:"I want to buy a jin of pears." },
+      { h:"贵", p:"guì", pos:"adj.", m:"expensive, dear", ex:"这个太贵了！", exm:"This is too expensive!" },
+      { h:"便宜", p:"piányí", pos:"adj.", m:"cheap, inexpensive", ex:"这里的水果很便宜。", exm:"The fruit here is very cheap." },
+      { h:"好吃", p:"hǎochī", pos:"adj.", m:"delicious, tasty", ex:"这个面包很好吃。", exm:"This bread is very delicious." },
+      { h:"那", p:"nà / nèi", pos:"pron.", m:"that", ex:"那个多少钱？", exm:"How much is that?" },
+      { h:"别的", p:"biéde", pos:"pron.", m:"other (things/people)", ex:"你还需要别的吗？", exm:"Do you need anything else?" },
+      { h:"了", p:"le", pos:"part.", m:"(completion/change-of-state particle)", ex:"我买了一瓶水。", exm:"I bought a bottle of water." },
+      { h:"太…了", p:"tài…le", pos:"pattern", m:"too…! (exclamation)", ex:"太好吃了！", exm:"It's so delicious!" },
+      { h:"钱", p:"qián", pos:"n.", m:"money", ex:"你有零钱吗？", exm:"Do you have change?" },
+      { h:"水", p:"shuǐ", pos:"n.", m:"water", ex:"我想买两瓶水。", exm:"I want to buy two bottles of water." },
+      { h:"梨", p:"lí", pos:"n.", m:"pear", ex:"一斤梨多少钱？", exm:"How much is a jin of pears?" },
+      { h:"葡萄", p:"pútao", pos:"n.", m:"grape", ex:"这里的葡萄很甜。", exm:"The grapes here are very sweet." },
+      { h:"面包", p:"miànbāo", pos:"n.", m:"bread", ex:"早上我吃面包。", exm:"I eat bread in the morning." },
+      { h:"斤", p:"jīn", pos:"m.", m:"jin (500 g, Chinese unit of weight)", ex:"我买了两斤苹果。", exm:"I bought two jin of apples." },
+      { h:"瓶", p:"píng", pos:"m.", m:"bottle (measure word)", ex:"我要一瓶水。", exm:"I want a bottle of water." },
+      { h:"块（元）", p:"kuài (yuán)", pos:"m.", m:"yuan, kuai (Chinese currency)", ex:"一共五块钱。", exm:"It's five yuan in total." },
+      { h:"种", p:"zhǒng", pos:"m.", m:"kind, type, sort", ex:"这里有很多种水果。", exm:"There are many kinds of fruit here." },
+    ]
+  },
+  {
+    num: 8, zh: "请问，银行在哪儿", en: "Excuse Me, Where's the Bank",
+    words: [
+      { h:"在", p:"zài", pos:"v.", m:"to be at/in; located at", ex:"超市在学校对面。", exm:"The supermarket is across from the school." },
+      { h:"看", p:"kàn", pos:"v.", m:"to look, to see, to watch", ex:"我喜欢看书。", exm:"I like reading books." },
+      { h:"请问", p:"qǐngwèn", pos:"v.", m:"excuse me (may I ask)", ex:"请问，银行在哪儿？", exm:"Excuse me, where is the bank?" },
+      { h:"就", p:"jiù", pos:"adv.", m:"just, right (there/here)", ex:"超市就在前边。", exm:"The supermarket is just ahead." },
+      { h:"远", p:"yuǎn", pos:"adj.", m:"far, distant", ex:"学校离这里很远吗？", exm:"Is the school far from here?" },
+      { h:"哪儿", p:"nǎr", pos:"pron.", m:"where", ex:"请问，邮局在哪儿？", exm:"Excuse me, where is the post office?" },
+      { h:"超市", p:"chāoshì", pos:"n.", m:"supermarket", ex:"附近有超市吗？", exm:"Is there a supermarket nearby?" },
+      { h:"学校", p:"xuéxiào", pos:"n.", m:"school", ex:"我们学校很大。", exm:"Our school is very large." },
+      { h:"邮局", p:"yóujú", pos:"n.", m:"post office", ex:"邮局在银行旁边。", exm:"The post office is next to the bank." },
+      { h:"地方", p:"dìfang", pos:"n.", m:"place, area", ex:"这个地方很好。", exm:"This place is very good." },
+      { h:"附近", p:"fùjìn", pos:"n.", m:"nearby, in the vicinity", ex:"附近有银行吗？", exm:"Is there a bank nearby?" },
+      { h:"对面", p:"duìmiàn", pos:"n.", m:"opposite side, across", ex:"超市在学校对面。", exm:"The supermarket is across from the school." },
+      { h:"前边", p:"qiánbiān", pos:"n.", m:"front, ahead", ex:"邮局就在前边。", exm:"The post office is just ahead." },
+      { h:"后边", p:"hòubiān", pos:"n.", m:"behind, at the back", ex:"银行在后边。", exm:"The bank is behind." },
+      { h:"旁边", p:"pángbiān", pos:"n.", m:"beside, next to", ex:"超市在宿舍旁边。", exm:"The supermarket is next to the dormitory." },
+      { h:"里（边）", p:"lǐ (biān)", pos:"n.", m:"inside, interior", ex:"书在包里。", exm:"The book is in the bag." },
+    ]
+  },
+  {
+    num: 9, zh: "今天几月几号", en: "What's the Date Today",
+    words: [
+      { h:"去", p:"qù", pos:"v.", m:"to go", ex:"周末我们去天津。", exm:"We are going to Tianjin on the weekend." },
+      { h:"玩儿", p:"wánr", pos:"v.", m:"to play, to have fun", ex:"你去哪儿玩儿？", exm:"Where are you going to have fun?" },
+      { h:"放假", p:"fàngjià", pos:"v.", m:"to have a holiday/vacation", ex:"我们明天放假。", exm:"We have a holiday tomorrow." },
+      { h:"的", p:"de", pos:"part.", m:"structural particle (possessive/modifier)", ex:"这是我的书。", exm:"This is my book." },
+      { h:"哦", p:"ò", pos:"int.", m:"oh (realisation/understanding)", ex:"哦，原来是你！", exm:"Oh, it's you!" },
+      { h:"没问题", p:"méi wèntí", pos:"phrase", m:"no problem", ex:"没问题，我来帮你。", exm:"No problem, I'll help you." },
+      { h:"今年", p:"jīnnián", pos:"n.", m:"this year", ex:"今年我学习汉语。", exm:"This year I am studying Chinese." },
+      { h:"生日", p:"shēngrì", pos:"n.", m:"birthday", ex:"今天是我的生日。", exm:"Today is my birthday." },
+      { h:"教室", p:"jiàoshì", pos:"n.", m:"classroom", ex:"我们的教室很大。", exm:"Our classroom is very large." },
+      { h:"电脑", p:"diànnǎo", pos:"n.", m:"computer", ex:"我的电脑很新。", exm:"My computer is very new." },
+      { h:"课", p:"kè", pos:"n.", m:"class, lesson, course", ex:"我今天有四节课。", exm:"I have four classes today." },
+      { h:"咱们", p:"zánmen", pos:"pron.", m:"we/us (speaker included)", ex:"咱们一起去吧！", exm:"Let's go together!" },
+    ]
+  },
+  {
+    num: 10, zh: "我每天8点上课", en: "I Have Class at 8 O'clock Every Day",
+    words: [
+      { h:"上课", p:"shàngkè", pos:"v.", m:"to have class, to attend class", ex:"我每天八点上课。", exm:"I have class at 8 o'clock every day." },
+      { h:"下课", p:"xiàkè", pos:"v.", m:"to finish class", ex:"我们十二点下课。", exm:"We finish class at twelve o'clock." },
+      { h:"起床", p:"qǐchuáng", pos:"v.", m:"to get up, to get out of bed", ex:"我每天七点起床。", exm:"I get up at 7 o'clock every day." },
+      { h:"睡觉", p:"shuìjiào", pos:"v.", m:"to sleep, to go to bed", ex:"我晚上十一点睡觉。", exm:"I go to bed at 11 o'clock at night." },
+      { h:"吃", p:"chī", pos:"v.", m:"to eat", ex:"你吃早饭了吗？", exm:"Have you eaten breakfast?" },
+      { h:"回", p:"huí", pos:"v.", m:"to return, to go back", ex:"我下课就回宿舍。", exm:"I go back to the dormitory right after class." },
+      { h:"回来", p:"huílai", pos:"v.", m:"to come back, to return", ex:"他什么时候回来？", exm:"When will he come back?" },
+      { h:"休息", p:"xiūxi", pos:"v.", m:"to rest, to take a break", ex:"我们中午休息一个小时。", exm:"We rest for one hour at noon." },
+      { h:"差", p:"chà", pos:"v.", m:"to lack, to be short of (time)", ex:"现在差五分八点。", exm:"It is now five to eight." },
+      { h:"吧", p:"ba", pos:"part.", m:"particle (suggestion / mild assertion)", ex:"你是学生吧？", exm:"You're a student, right?" },
+      { h:"晚", p:"wǎn", pos:"adj.", m:"late", ex:"对不起，我来晚了。", exm:"Sorry, I'm late." },
+      { h:"长", p:"cháng", pos:"adj.", m:"long", ex:"这条路很长。", exm:"This road is very long." },
+      { h:"每", p:"měi", pos:"pron.", m:"every, each", ex:"我每天学习汉语。", exm:"I study Chinese every day." },
+      { h:"现在", p:"xiànzài", pos:"n.", m:"now, at present", ex:"现在几点了？", exm:"What time is it now?" },
+      { h:"时间", p:"shíjiān", pos:"n.", m:"time", ex:"我没有时间。", exm:"I don't have time." },
+      { h:"时候", p:"shíhou", pos:"n.", m:"time, moment, when", ex:"你什么时候来？", exm:"When will you come?" },
+      { h:"上午", p:"shàngwǔ", pos:"n.", m:"morning (a.m.)", ex:"上午我有三节课。", exm:"I have three classes in the morning." },
+      { h:"晚饭", p:"wǎnfàn", pos:"n.", m:"dinner, supper", ex:"我们一起吃晚饭吧。", exm:"Let's have dinner together." },
+      { h:"晚安", p:"wǎn'ān", pos:"phrase", m:"good night", ex:"晚安，睡个好觉！", exm:"Good night, sleep well!" },
+      { h:"公司", p:"gōngsī", pos:"n.", m:"company, firm", ex:"我爸爸在公司工作。", exm:"My father works at a company." },
+      { h:"天", p:"tiān", pos:"n.", m:"day; sky", ex:"一天有二十四个小时。", exm:"There are 24 hours in a day." },
+      { h:"点", p:"diǎn", pos:"m.", m:"o'clock; point", ex:"现在八点半。", exm:"It is now 8:30." },
+      { h:"分", p:"fēn", pos:"m.", m:"minute; cent", ex:"还有十分钟上课。", exm:"There are ten minutes until class starts." },
+      { h:"分钟", p:"fēnzhōng", pos:"m.", m:"minute (duration)", ex:"我走路二十分钟到学校。", exm:"I walk 20 minutes to school." },
+      { h:"刻", p:"kè", pos:"m.", m:"quarter of an hour", ex:"现在八点一刻。", exm:"It is now a quarter past eight." },
+      { h:"节", p:"jié", pos:"m.", m:"class period", ex:"今天有几节课？", exm:"How many class periods are there today?" },
+      { h:"多长", p:"duō cháng", pos:"phrase", m:"how long (duration)", ex:"你每天学习多长时间？", exm:"How long do you study every day?" },
+      { h:"多", p:"duō", pos:"adv.", m:"more than, over (a number)", ex:"我来北京已经一年多了。", exm:"I've been in Beijing for over a year." },
+    ]
+  },
+  {
+    num: 11, zh: "我住在留学生宿舍", en: "I Stay in the International Student Dormitory",
+    words: [
+      { h:"住", p:"zhù", pos:"v.", m:"to live, to reside, to stay", ex:"我住在留学生宿舍。", exm:"I live in the international student dormitory." },
+      { h:"来", p:"lái", pos:"v.", m:"to come", ex:"你从哪儿来？", exm:"Where are you from?" },
+      { h:"离", p:"lí", pos:"v.", m:"to be away from, at a distance from", ex:"学校离这里不远。", exm:"The school is not far from here." },
+      { h:"骑", p:"qí", pos:"v.", m:"to ride (bike/horse)", ex:"我骑自行车来学校。", exm:"I ride a bicycle to school." },
+      { h:"走路", p:"zǒulù", pos:"v.", m:"to walk", ex:"我走路去学校。", exm:"I walk to school." },
+      { h:"坐", p:"zuò", pos:"v.", m:"to sit; to take (transport)", ex:"我坐公共汽车来学校。", exm:"I take the bus to school." },
+      { h:"大", p:"dà", pos:"adj.", m:"big, large", ex:"我们学校很大。", exm:"Our school is very large." },
+      { h:"近", p:"jìn", pos:"adj.", m:"close, near", ex:"宿舍离学校很近。", exm:"The dormitory is very close to the school." },
+      { h:"漂亮", p:"piàoliang", pos:"adj.", m:"beautiful, pretty, good-looking", ex:"这个地方真漂亮！", exm:"This place is really beautiful!" },
+      { h:"忙", p:"máng", pos:"adj.", m:"busy", ex:"我最近很忙。", exm:"I have been very busy lately." },
+      { h:"都", p:"dōu", pos:"adv.", m:"all, both, entirely", ex:"我们都是留学生。", exm:"We are all international students." },
+      { h:"啊", p:"a", pos:"part.", m:"particle (softening / exclamation)", ex:"真的啊！", exm:"Really!" },
+      { h:"留学生", p:"liúxuéshēng", pos:"n.", m:"international student", ex:"我们学校有很多留学生。", exm:"Our school has many international students." },
+      { h:"宿舍", p:"sùshè", pos:"n.", m:"dormitory", ex:"我住在留学生宿舍。", exm:"I live in the international student dormitory." },
+      { h:"路", p:"lù", pos:"n.", m:"road, street, route", ex:"这条路很长。", exm:"This road is very long." },
+      { h:"小区", p:"xiǎoqū", pos:"n.", m:"residential compound / estate", ex:"我住在一个小区里。", exm:"I live in a residential compound." },
+      { h:"小时", p:"xiǎoshí", pos:"n.", m:"hour", ex:"我每天学习两个小时。", exm:"I study for two hours every day." },
+      { h:"外边", p:"wàibiān", pos:"n.", m:"outside, exterior", ex:"外边很冷，多穿点。", exm:"It's cold outside, dress warmly." },
+      { h:"最近", p:"zuìjìn", pos:"n.", m:"recently, lately; nearest", ex:"你最近忙吗？", exm:"Have you been busy lately?" },
+      { h:"公共汽车", p:"gōnggòng qìchē", pos:"n.", m:"bus (public transport)", ex:"我坐公共汽车去学校。", exm:"I take the bus to school." },
+    ]
+  },
+  {
+    num: 12, zh: "我在北京学习汉语", en: "I Study Chinese in Beijing",
+    words: [
+      { h:"喜欢", p:"xǐhuān", pos:"v.", m:"to like, to be fond of", ex:"我喜欢学习汉语。", exm:"I like studying Chinese." },
+      { h:"工作", p:"gōngzuò", pos:"v.", m:"to work; work, job", ex:"你在哪儿工作？", exm:"Where do you work?" },
+      { h:"感兴趣", p:"gǎn xìngqù", pos:"phrase", m:"to be interested in", ex:"我对中国文化感兴趣。", exm:"I am interested in Chinese culture." },
+      { h:"对", p:"duì", pos:"prep.", m:"to, towards, regarding", ex:"我对音乐很感兴趣。", exm:"I am very interested in music." },
+      { h:"可以", p:"kěyǐ", pos:"aux.", m:"can, may; it's OK", ex:"我可以用一下你的电话吗？", exm:"May I use your phone for a moment?" },
+      { h:"最", p:"zuì", pos:"adv.", m:"most, -est (superlative)", ex:"我最喜欢学习汉语。", exm:"I like studying Chinese the most." },
+      { h:"多", p:"duō", pos:"adj.", m:"many, much, a lot", ex:"北京有很多好吃的东西。", exm:"There are many delicious things in Beijing." },
+      { h:"从…到…", p:"cóng…dào…", pos:"pattern", m:"from… to…", ex:"从学校到宿舍要走二十分钟。", exm:"It takes 20 minutes to walk from school to the dormitory." },
+      { h:"为什么", p:"wèi shénme", pos:"phrase", m:"why, for what reason", ex:"你为什么学习汉语？", exm:"Why do you study Chinese?" },
+      { h:"电话", p:"diànhuà", pos:"n.", m:"telephone; phone call", ex:"你的电话号码是多少？", exm:"What is your phone number?" },
+      { h:"手机", p:"shǒujī", pos:"n.", m:"mobile phone, cell phone", ex:"我的手机不见了。", exm:"My phone is gone." },
+      { h:"电视", p:"diànshì", pos:"n.", m:"television, TV", ex:"你喜欢看电视吗？", exm:"Do you like watching TV?" },
+      { h:"广告", p:"guǎnggào", pos:"n.", m:"advertisement", ex:"电视里有很多广告。", exm:"There are many advertisements on TV." },
+      { h:"节目", p:"jiémù", pos:"n.", m:"program (TV/radio)", ex:"你喜欢看什么节目？", exm:"What programs do you like to watch?" },
+      { h:"同事", p:"tóngshì", pos:"n.", m:"colleague, coworker", ex:"她是我的同事。", exm:"She is my colleague." },
+      { h:"名片", p:"míngpiàn", pos:"n.", m:"business card", ex:"请给我你的名片。", exm:"Please give me your business card." },
+      { h:"号码", p:"hàomǎ", pos:"n.", m:"number (phone/ID)", ex:"你的手机号码是多少？", exm:"What is your mobile phone number?" },
+      { h:"房间", p:"fángjiān", pos:"n.", m:"room", ex:"我的房间很小。", exm:"My room is very small." },
+      { h:"吧", p:"ba", pos:"part.", m:"particle (assumption / seeking agreement)", ex:"你是日本人吧？", exm:"You're Japanese, right?" },
+      { h:"兴趣", p:"xìngqù", pos:"n.", m:"interest, hobby", ex:"你的兴趣是什么？", exm:"What are your interests?" },
+    ]
+  },
+  {
+    num: 13, zh: "你喜欢中餐还是西餐", en: "Do You Like Chinese Food or Western Food",
+    words: [
+      { h:"说", p:"shuō", pos:"v.", m:"to speak, to say, to talk", ex:"你汉语说得很好！", exm:"You speak Chinese very well!" },
+      { h:"旅行", p:"lǚxíng", pos:"v.", m:"to travel", ex:"我喜欢旅行。", exm:"I like traveling." },
+      { h:"踢", p:"tī", pos:"v.", m:"to kick; to play (football)", ex:"他喜欢踢足球。", exm:"He likes playing soccer." },
+      { h:"打", p:"dǎ", pos:"v.", m:"to play (ball sports)", ex:"我们打乒乓球吧。", exm:"Let's play pingpong." },
+      { h:"游泳", p:"yóuyǒng", pos:"v.", m:"to swim", ex:"我不会游泳。", exm:"I can't swim." },
+      { h:"过", p:"guo", pos:"part.", m:"particle (past experience: have done)", ex:"你去过北京吗？", exm:"Have you been to Beijing?" },
+      { h:"没（有）", p:"méi(yǒu)", pos:"adv.", m:"not yet, never (for experience)", ex:"我没有去过上海。", exm:"I've never been to Shanghai." },
+      { h:"还是", p:"háishi", pos:"conj.", m:"or (in questions); still", ex:"你喜欢中餐还是西餐？", exm:"Do you like Chinese food or Western food?" },
+      { h:"当然", p:"dāngrán", pos:"adv.", m:"of course, naturally", ex:"当然，我很喜欢！", exm:"Of course, I like it very much!" },
+      { h:"可是", p:"kěshì", pos:"conj.", m:"but, however", ex:"我想去，可是没有时间。", exm:"I want to go, but I don't have time." },
+      { h:"爱好", p:"àihào", pos:"n.", m:"hobby, interest", ex:"你的爱好是什么？", exm:"What are your hobbies?" },
+      { h:"汉字", p:"Hànzì", pos:"n.", m:"Chinese character", ex:"汉字很难写。", exm:"Chinese characters are hard to write." },
+      { h:"西餐", p:"xīcān", pos:"n.", m:"Western food/cuisine", ex:"你喜欢吃西餐吗？", exm:"Do you like eating Western food?" },
+      { h:"饭馆", p:"fànguǎn", pos:"n.", m:"restaurant", ex:"附近有一家好的饭馆。", exm:"There is a good restaurant nearby." },
+      { h:"大家", p:"dàjiā", pos:"pron.", m:"everyone, everybody", ex:"大家都来了。", exm:"Everyone is here." },
+      { h:"那儿", p:"nàr", pos:"pron.", m:"there, that place", ex:"那儿的菜很好吃。", exm:"The food there is very delicious." },
+      { h:"去年", p:"qùnián", pos:"n.", m:"last year", ex:"去年我去过天津。", exm:"I went to Tianjin last year." },
+      { h:"网球", p:"wǎngqiú", pos:"n.", m:"tennis", ex:"你会打网球吗？", exm:"Can you play tennis?" },
+    ]
+  },
+  {
+    num: 14, zh: "我搬家了", en: "I've Moved",
+    words: [
+      { h:"搬（家）", p:"bān (jiā)", pos:"v.", m:"to move (house)", ex:"我搬家了。", exm:"I've moved." },
+      { h:"办", p:"bàn", pos:"v.", m:"to do, to handle, to manage", ex:"我去办手续。", exm:"I'm going to handle the procedures." },
+      { h:"参观", p:"cānguān", pos:"v.", m:"to visit (a place/facility)", ex:"我们去参观故宫。", exm:"We are going to visit the Palace Museum." },
+      { h:"到", p:"dào", pos:"v.", m:"to arrive, to reach", ex:"我到北京了。", exm:"I've arrived in Beijing." },
+      { h:"进", p:"jìn", pos:"v.", m:"to enter, to go in", ex:"请进！", exm:"Please come in!" },
+      { h:"请", p:"qǐng", pos:"v.", m:"please; to invite; to treat", ex:"请坐！", exm:"Please sit down!" },
+      { h:"干净", p:"gānjìng", pos:"adj.", m:"clean, tidy", ex:"这个房间很干净。", exm:"This room is very clean." },
+      { h:"没意思", p:"méi yìsi", pos:"phrase", m:"boring, uninteresting, dull", ex:"这个节目没意思。", exm:"This program is boring." },
+      { h:"层", p:"céng", pos:"m.", m:"floor, storey", ex:"我住在五层。", exm:"I live on the fifth floor." },
+      { h:"客厅", p:"kètīng", pos:"n.", m:"living room, lounge", ex:"客厅里有一个大电视。", exm:"There is a big TV in the living room." },
+      { h:"厨房", p:"chúfáng", pos:"n.", m:"kitchen", ex:"厨房在右边。", exm:"The kitchen is on the right." },
+      { h:"卫生间", p:"wèishēngjiān", pos:"n.", m:"bathroom, toilet", ex:"卫生间在哪儿？", exm:"Where is the bathroom?" },
+      { h:"餐厅", p:"cāntīng", pos:"n.", m:"dining room, cafeteria", ex:"我们在餐厅吃饭。", exm:"We eat in the dining room." },
+      { h:"房租", p:"fángzū", pos:"n.", m:"rent (for a room/house)", ex:"这里的房租贵吗？", exm:"Is the rent expensive here?" },
+      { h:"号", p:"hào", pos:"n.", m:"number (house/bus); size", ex:"我住几号房间？", exm:"Which room number do I live in?" },
+      { h:"同屋", p:"tóngwū", pos:"n.", m:"roommate", ex:"我的同屋是韩国人。", exm:"My roommate is Korean." },
+      { h:"别人", p:"biéren", pos:"pron.", m:"other people, others", ex:"你别管别人的事。", exm:"Don't mind other people's business." },
+      { h:"这儿", p:"zhèr", pos:"pron.", m:"here, this place", ex:"请在这儿等我。", exm:"Please wait for me here." },
+      { h:"右边", p:"yòubiān", pos:"n.", m:"right side, to the right", ex:"厨房在右边。", exm:"The kitchen is on the right side." },
+      { h:"左边", p:"zuǒbiān", pos:"n.", m:"left side, to the left", ex:"卫生间在左边。", exm:"The bathroom is on the left side." },
+    ]
+  },
+  {
+    num: 15, zh: "周末我们去了天津", en: "We Went to Tianjin at the Weekend",
+    words: [
+      { h:"碰见", p:"pèngjiàn", pos:"v.", m:"to run into, to meet by chance", ex:"我在路上碰见了我的老师。", exm:"I ran into my teacher on the road." },
+      { h:"极（了）", p:"jí (le)", pos:"adv.", m:"extremely, to the utmost", ex:"这里的菜好吃极了！", exm:"The food here is extremely delicious!" },
+      { h:"好玩儿", p:"hǎowánr", pos:"adj.", m:"fun, interesting, amusing", ex:"那个地方很好玩儿。", exm:"That place is very fun." },
+      { h:"有名", p:"yǒumíng", pos:"adj.", m:"famous, well-known", ex:"天津包子很有名。", exm:"Tianjin steamed buns are very famous." },
+      { h:"少", p:"shǎo", pos:"adj.", m:"few, little, less", ex:"我们班人很少。", exm:"There are very few people in our class." },
+      { h:"老", p:"lǎo", pos:"adj.", m:"old, aged; (prefix for respect)", ex:"这条街很老了。", exm:"This street is very old." },
+      { h:"为了", p:"wèile", pos:"prep.", m:"for, in order to, for the sake of", ex:"为了学好汉语，我每天都练习。", exm:"In order to learn Chinese well, I practice every day." },
+      { h:"一…就…", p:"yī…jiù…", pos:"pattern", m:"as soon as… then…", ex:"我一回家就睡觉。", exm:"As soon as I get home, I go to sleep." },
+      { h:"什么的", p:"shénmede", pos:"part.", m:"etc., and so on, and such", ex:"我喜欢吃包子、饺子什么的。", exm:"I like eating baozi, dumplings, and such things." },
+      { h:"周末", p:"zhōumò", pos:"n.", m:"weekend", ex:"周末你做什么？", exm:"What do you do on the weekend?" },
+      { h:"特色", p:"tèsè", pos:"n.", m:"characteristic, specialty, feature", ex:"北京烤鸭是北京的特色菜。", exm:"Peking duck is a specialty dish of Beijing." },
+      { h:"菜", p:"cài", pos:"n.", m:"dish; vegetable; food", ex:"这道菜真好吃！", exm:"This dish is really delicious!" },
+      { h:"素菜", p:"sùcài", pos:"n.", m:"vegetable dish", ex:"我不吃肉，只吃素菜。", exm:"I don't eat meat, I only eat vegetable dishes." },
+      { h:"肉", p:"ròu", pos:"n.", m:"meat, flesh", ex:"我很喜欢吃肉。", exm:"I really like eating meat." },
+      { h:"包子", p:"bāozi", pos:"n.", m:"steamed stuffed bun", ex:"天津的包子很有名。", exm:"Tianjin's steamed buns are very famous." },
+      { h:"味道", p:"wèidào", pos:"n.", m:"taste, flavour", ex:"这个菜的味道很好。", exm:"This dish tastes very good." },
+      { h:"环保", p:"huánbǎo", pos:"n.", m:"environmental protection; eco-friendly", ex:"骑自行车很环保。", exm:"Riding a bicycle is very eco-friendly." },
+      { h:"家", p:"jiā", pos:"m.", m:"(measure word for restaurants, companies)", ex:"附近有一家不错的饭馆。", exm:"There is a good restaurant nearby." },
+      { h:"趟", p:"tàng", pos:"m.", m:"(measure word for trips/journeys)", ex:"我去了一趟天津。", exm:"I made a trip to Tianjin." },
+    ]
+  },
+  {
+    num: 16, zh: "你会教英语吗", en: "Can You Teach English",
+    words: [
+      { h:"会", p:"huì", pos:"v./aux.", m:"can, know how to; will (future)", ex:"你会说汉语吗？", exm:"Can you speak Chinese?" },
+      { h:"能", p:"néng", pos:"aux.", m:"can, to be able to; may", ex:"你能帮我吗？", exm:"Can you help me?" },
+      { h:"教", p:"jiāo", pos:"v.", m:"to teach", ex:"他教我们汉语。", exm:"He teaches us Chinese." },
+      { h:"帮助", p:"bāngzhù", pos:"v.", m:"to help, to assist", ex:"谢谢你的帮助！", exm:"Thank you for your help!" },
+      { h:"打工", p:"dǎgōng", pos:"v.", m:"to work part-time; to do odd jobs", ex:"我周末打工。", exm:"I work part-time on weekends." },
+      { h:"发音", p:"fāyīn", pos:"v.", m:"to pronounce; pronunciation", ex:"你的发音很标准。", exm:"Your pronunciation is very standard." },
+      { h:"开始", p:"kāishǐ", pos:"v.", m:"to begin, to start", ex:"我们开始上课吧。", exm:"Let's start class." },
+      { h:"了解", p:"liǎojiě", pos:"v.", m:"to understand, to know about", ex:"我想更好地了解中国文化。", exm:"I want to better understand Chinese culture." },
+      { h:"聊天儿", p:"liáotiānr", pos:"v.", m:"to chat, to have a conversation", ex:"我喜欢和朋友聊天儿。", exm:"I like chatting with friends." },
+      { h:"觉得", p:"juéde", pos:"v.", m:"to think, to feel, to consider", ex:"你觉得汉语难吗？", exm:"Do you think Chinese is difficult?" },
+      { h:"写", p:"xiě", pos:"v.", m:"to write", ex:"请把你的名字写在这里。", exm:"Please write your name here." },
+      { h:"知道", p:"zhīdao", pos:"v.", m:"to know (a fact)", ex:"你知道他住在哪儿吗？", exm:"Do you know where he lives?" },
+      { h:"容易", p:"róngyì", pos:"adj.", m:"easy, simple", ex:"这个汉字很容易写。", exm:"This Chinese character is easy to write." },
+      { h:"难", p:"nán", pos:"adj.", m:"difficult, hard", ex:"汉语难，可是我很喜欢。", exm:"Chinese is difficult, but I like it very much." },
+      { h:"方便", p:"fāngbiàn", pos:"adj.", m:"convenient, handy", ex:"住在学校附近很方便。", exm:"Living near the school is very convenient." },
+      { h:"互相", p:"hùxiāng", pos:"adv.", m:"mutually, each other", ex:"我们互相帮助。", exm:"We help each other." },
+      { h:"文化", p:"wénhuà", pos:"n.", m:"culture; civilization", ex:"我喜欢中国文化。", exm:"I like Chinese culture." },
+      { h:"语伴", p:"yǔbàn", pos:"n.", m:"language exchange partner", ex:"我想找一个语伴。", exm:"I want to find a language partner." },
+      { h:"英语", p:"Yīngyǔ", pos:"n.", m:"English (language)", ex:"你会说英语吗？", exm:"Can you speak English?" },
+      { h:"份", p:"fèn", pos:"m.", m:"(measure for portions, helpings)", ex:"这份作业很难。", exm:"This assignment is very difficult." },
+    ]
+  },
+  {
+    num: 17, zh: "圣诞节快到了", en: "Christmas is Coming",
+    words: [
+      { h:"过（节）", p:"guò (jié)", pos:"v.", m:"to celebrate (a festival)", ex:"你们怎么过圣诞节？", exm:"How do you celebrate Christmas?" },
+      { h:"结束", p:"jiéshù", pos:"v.", m:"to end, to finish, to conclude", ex:"课结束了，我们走吧。", exm:"Class is over, let's go." },
+      { h:"打算", p:"dǎsuan", pos:"v.", m:"to plan, to intend; plan", ex:"你打算去哪儿旅行？", exm:"Where are you planning to travel?" },
+      { h:"听说", p:"tīngshuō", pos:"v.", m:"to hear (that), to be told; reportedly", ex:"听说北京的冬天很冷。", exm:"I heard that winter in Beijing is very cold." },
+      { h:"快…了", p:"kuài…le", pos:"pattern", m:"soon…; about to… (imminence)", ex:"快放假了！", exm:"The holiday is coming soon!" },
+      { h:"（就）要…了", p:"(jiù) yào…le", pos:"pattern", m:"about to…, going to… (soon)", ex:"我就要回国了。", exm:"I am about to return home." },
+      { h:"要是", p:"yàoshi", pos:"conj.", m:"if, in case", ex:"要是明天不下雨，我们就去公园。", exm:"If it doesn't rain tomorrow, we'll go to the park." },
+      { h:"也许", p:"yěxǔ", pos:"adv.", m:"perhaps, maybe", ex:"也许他不来了。", exm:"Maybe he's not coming." },
+      { h:"父母", p:"fùmǔ", pos:"n.", m:"parents (father and mother)", ex:"我很想我的父母。", exm:"I miss my parents very much." },
+      { h:"节（日）", p:"jié (rì)", pos:"n.", m:"festival, holiday", ex:"你们国家有哪些节日？", exm:"What festivals does your country have?" },
+      { h:"名胜古迹", p:"míngshèng gǔjì", pos:"phrase", m:"scenic spots and historical sites", ex:"北京有很多名胜古迹。", exm:"Beijing has many scenic spots and historical sites." },
+    ]
+  },
+  {
+    num: 18, zh: "我们每天打一个多小时乒乓球", en: "We Play Pingpong for Over an Hour Every Day",
+    words: [
+      { h:"听", p:"tīng", pos:"v.", m:"to listen, to hear", ex:"我每天听汉语录音。", exm:"I listen to Chinese recordings every day." },
+      { h:"打", p:"dǎ", pos:"v.", m:"to play (ball sports); to hit", ex:"我们每天打一个小时乒乓球。", exm:"We play pingpong for one hour every day." },
+      { h:"干", p:"gàn", pos:"v.", m:"to do, to work", ex:"你在干什么？", exm:"What are you doing?" },
+      { h:"病", p:"bìng", pos:"v.", m:"to be sick/ill; illness", ex:"我头疼，可能病了。", exm:"My head hurts, I might be sick." },
+      { h:"累", p:"lèi", pos:"adj.", m:"tired, exhausted", ex:"今天太累了！", exm:"I'm so tired today!" },
+      { h:"疼", p:"téng", pos:"adj.", m:"painful, aching, to hurt", ex:"我头很疼。", exm:"My head really hurts." },
+      { h:"多", p:"duō", pos:"num.", m:"more than, over (after a number)", ex:"我们打了一个多小时球。", exm:"We played ball for over an hour." },
+      { h:"那", p:"nà", pos:"conj.", m:"then, in that case", ex:"那你去休息吧。", exm:"Then go rest." },
+      { h:"给", p:"gěi", pos:"prep.", m:"to, for (recipient); to give", ex:"他给我发了一封邮件。", exm:"He sent me an email." },
+      { h:"跟", p:"gēn", pos:"prep.", m:"with; to follow", ex:"我跟朋友一起去图书馆。", exm:"I go to the library with my friend." },
+      { h:"音乐", p:"yīnyuè", pos:"n.", m:"music", ex:"你喜欢听什么音乐？", exm:"What kind of music do you like?" },
+      { h:"中文", p:"Zhōngwén", pos:"n.", m:"Chinese language/writing", ex:"这本书是中文的。", exm:"This book is in Chinese." },
+      { h:"看法", p:"kànfǎ", pos:"n.", m:"opinion, view, point of view", ex:"你对这件事有什么看法？", exm:"What is your view on this matter?" },
+      { h:"头", p:"tóu", pos:"n.", m:"head", ex:"我头很疼。", exm:"My head really hurts." },
+      { h:"作业", p:"zuòyè", pos:"n.", m:"homework, assignment", ex:"我今天有很多作业。", exm:"I have a lot of homework today." },
+    ]
+  },
+  {
+    num: 19, zh: "电脑已经修好了", en: "The Computer is Fixed",
+    words: [
+      { h:"修", p:"xiū", pos:"v.", m:"to repair, to fix, to mend", ex:"我的电脑坏了，要修一下。", exm:"My computer is broken and needs to be repaired." },
+      { h:"开机", p:"kāijī", pos:"v.", m:"to power on (a device)", ex:"电脑开机要几分钟。", exm:"It takes a few minutes to power on the computer." },
+      { h:"死机", p:"sǐjī", pos:"v.", m:"to crash (computer freeze)", ex:"我的电脑死机了。", exm:"My computer crashed." },
+      { h:"试", p:"shì", pos:"v.", m:"to try, to test", ex:"你试试这个方法。", exm:"Try this method." },
+      { h:"完", p:"wán", pos:"v.", m:"to finish, to complete", ex:"我作业做完了。", exm:"I've finished my homework." },
+      { h:"忘", p:"wàng", pos:"v.", m:"to forget", ex:"我忘了带手机。", exm:"I forgot to bring my phone." },
+      { h:"问", p:"wèn", pos:"v.", m:"to ask (a question)", ex:"我想问你一个问题。", exm:"I want to ask you a question." },
+      { h:"拿", p:"ná", pos:"v.", m:"to take, to hold, to carry", ex:"你帮我拿一下这个包。", exm:"Help me carry this bag." },
+      { h:"帮（忙）", p:"bāng (máng)", pos:"v.", m:"to help (out)", ex:"你能帮忙吗？", exm:"Can you help?" },
+      { h:"打开", p:"dǎkāi", pos:"v.", m:"to open, to turn on", ex:"请打开电脑。", exm:"Please turn on the computer." },
+      { h:"用", p:"yòng", pos:"v.", m:"to use, to employ", ex:"我用电脑学习汉语。", exm:"I use the computer to study Chinese." },
+      { h:"服务", p:"fúwù", pos:"v.", m:"to serve; service", ex:"这里的服务很好。", exm:"The service here is very good." },
+      { h:"已经", p:"yǐjīng", pos:"adv.", m:"already", ex:"我已经吃过饭了。", exm:"I've already eaten." },
+      { h:"老", p:"lǎo", pos:"adv.", m:"always (doing sth.); persistently", ex:"他老是忘事。", exm:"He is always forgetting things." },
+      { h:"满", p:"mǎn", pos:"adj.", m:"full; satisfied", ex:"房间里的书满了。", exm:"The room is full of books." },
+      { h:"刚才", p:"gāngcái", pos:"n.", m:"just now, a moment ago", ex:"你刚才去哪儿了？", exm:"Where did you go just now?" },
+      { h:"电源", p:"diànyuán", pos:"n.", m:"power supply, power source", ex:"你插好电源了吗？", exm:"Have you plugged in the power?" },
+      { h:"快递", p:"kuàidì", pos:"n.", m:"express delivery, courier", ex:"我收到了一个快递。", exm:"I received an express delivery." },
+      { h:"包", p:"bāo", pos:"n.", m:"bag, pack, package", ex:"这个包是你的吗？", exm:"Is this bag yours?" },
+      { h:"书店", p:"shūdiàn", pos:"n.", m:"bookstore, bookshop", ex:"附近有书店吗？", exm:"Is there a bookstore nearby?" },
+    ]
+  },
+  {
+    num: 20, zh: "把照片贴在墙上", en: "Stick the Photographs on the Wall",
+    words: [
+      { h:"把", p:"bǎ", pos:"prep.", m:"disposal preposition (handle/take)", ex:"把书放在桌子上。", exm:"Put the book on the table." },
+      { h:"挂", p:"guà", pos:"v.", m:"to hang (up), to put up", ex:"我把照片挂在墙上。", exm:"I hung the photo on the wall." },
+      { h:"贴", p:"tiē", pos:"v.", m:"to stick, to paste, to attach", ex:"我把地图贴在墙上。", exm:"I stuck the map on the wall." },
+      { h:"放", p:"fàng", pos:"v.", m:"to put, to place; to let go", ex:"你把这个放在哪儿？", exm:"Where did you put this?" },
+      { h:"换", p:"huàn", pos:"v.", m:"to change, to exchange, to swap", ex:"我想换一个房间。", exm:"I want to change to a different room." },
+      { h:"欢迎", p:"huānyíng", pos:"v.", m:"to welcome", ex:"欢迎你来我家！", exm:"Welcome to my home!" },
+      { h:"收拾", p:"shōushi", pos:"v.", m:"to tidy up, to pack, to clean", ex:"我在收拾房间。", exm:"I am tidying up my room." },
+      { h:"看见", p:"kànjiàn", pos:"v.", m:"to see, to catch sight of", ex:"我在路上看见了你的老师。", exm:"I saw your teacher on the road." },
+      { h:"棒", p:"bàng", pos:"adj.", m:"excellent, great, wonderful", ex:"你的汉语说得太棒了！", exm:"Your Chinese is excellent!" },
+      { h:"整齐", p:"zhěngqí", pos:"adj.", m:"neat, tidy, orderly", ex:"他的房间很整齐。", exm:"His room is very neat." },
+      { h:"乱", p:"luàn", pos:"adj.", m:"messy, chaotic, disorganized", ex:"我的房间很乱，对不起。", exm:"My room is very messy, sorry." },
+      { h:"舒服", p:"shūfu", pos:"adj.", m:"comfortable, at ease", ex:"这把椅子坐着很舒服。", exm:"This chair is very comfortable to sit on." },
+      { h:"啊", p:"à", pos:"int.", m:"ah! (exclamation of surprise/realisation)", ex:"啊，原来你在这里！", exm:"Ah, so you're here!" },
+      { h:"墙", p:"qiáng", pos:"n.", m:"wall", ex:"这面墙上有很多照片。", exm:"There are many photos on this wall." },
+      { h:"窗户", p:"chuānghu", pos:"n.", m:"window", ex:"请打开窗户透透气。", exm:"Please open the window to let in some air." },
+      { h:"门", p:"mén", pos:"n.", m:"door, gate", ex:"请关门。", exm:"Please close the door." },
+      { h:"桌子", p:"zhuōzi", pos:"n.", m:"table, desk", ex:"桌子上有什么？", exm:"What is on the table?" },
+      { h:"椅子", p:"yǐzi", pos:"n.", m:"chair", ex:"请坐在这把椅子上。", exm:"Please sit in this chair." },
+      { h:"照片", p:"zhàopiàn", pos:"n.", m:"photograph, photo", ex:"这是我家人的照片。", exm:"This is a photo of my family." },
+      { h:"主意", p:"zhǔyi", pos:"n.", m:"idea, plan", ex:"这个主意很好！", exm:"This is a great idea!" },
+      { h:"以前", p:"yǐqián", pos:"n.", m:"before, previously, in the past", ex:"以前我不会说汉语。", exm:"Previously I couldn't speak Chinese." },
+    ]
+  },
+  {
+    num: 21, zh: "明天最高气温10度", en: "The Highest Temperature Tomorrow Will Be 10 Degrees",
+    words: [
+      { h:"希望", p:"xīwàng", pos:"v.", m:"to hope, to wish; hope", ex:"我希望明天天气好。", exm:"I hope the weather is good tomorrow." },
+      { h:"见", p:"jiàn", pos:"v.", m:"to see, to meet", ex:"我明天见我的老师。", exm:"I'm meeting my teacher tomorrow." },
+      { h:"预报", p:"yùbào", pos:"v.", m:"to forecast; forecast", ex:"天气预报说明天下雨。", exm:"The weather forecast says it will rain tomorrow." },
+      { h:"高", p:"gāo", pos:"adj.", m:"tall, high", ex:"今天气温不太高。", exm:"The temperature is not very high today." },
+      { h:"低", p:"dī", pos:"adj.", m:"low", ex:"冬天气温很低。", exm:"The temperature is very low in winter." },
+      { h:"冷", p:"lěng", pos:"adj.", m:"cold", ex:"今天很冷，多穿点衣服。", exm:"It's very cold today, wear more clothes." },
+      { h:"差不多", p:"chàbuduō", pos:"adv.", m:"about, almost, more or less", ex:"今天和昨天差不多。", exm:"Today is about the same as yesterday." },
+      { h:"常常", p:"chángcháng", pos:"adv.", m:"often, frequently", ex:"他常常迟到。", exm:"He is often late." },
+      { h:"才", p:"cái", pos:"adv.", m:"only, just, then (and only then)", ex:"我才来北京两个月。", exm:"I've only been in Beijing for two months." },
+      { h:"更", p:"gèng", pos:"adv.", m:"even more, still more, further", ex:"今天比昨天更冷。", exm:"Today is even colder than yesterday." },
+      { h:"所以", p:"suǒyǐ", pos:"conj.", m:"so, therefore, as a result", ex:"天气太冷了，所以我不想出去。", exm:"The weather is too cold, so I don't want to go out." },
+      { h:"因为", p:"yīnwèi", pos:"conj.", m:"because, since, due to", ex:"因为下雨，我们没去公园。", exm:"Because it was raining, we didn't go to the park." },
+      { h:"天气", p:"tiānqì", pos:"n.", m:"weather", ex:"今天天气怎么样？", exm:"What is the weather like today?" },
+      { h:"气温", p:"qìwēn", pos:"n.", m:"air temperature", ex:"今天气温是零下三度。", exm:"Today's temperature is minus three degrees." },
+      { h:"季节", p:"jìjié", pos:"n.", m:"season (of the year)", ex:"你喜欢哪个季节？", exm:"Which season do you like?" },
+      { h:"春天", p:"chūntiān", pos:"n.", m:"spring (season)", ex:"春天来了，天气暖和了。", exm:"Spring has come, the weather has warmed up." },
+      { h:"夏天", p:"xiàtiān", pos:"n.", m:"summer", ex:"北京的夏天很热。", exm:"Summer in Beijing is very hot." },
+      { h:"秋天", p:"qiūtiān", pos:"n.", m:"autumn, fall", ex:"秋天的北京很美。", exm:"Beijing in autumn is very beautiful." },
+      { h:"冬天", p:"dōngtiān", pos:"n.", m:"winter", ex:"北京的冬天很冷。", exm:"Winter in Beijing is very cold." },
+      { h:"国家", p:"guójiā", pos:"n.", m:"country, nation, state", ex:"你的国家在哪儿？", exm:"Where is your country?" },
+      { h:"零下", p:"líng xià", pos:"phrase", m:"below zero, sub-zero", ex:"今天零下五度。", exm:"It is minus five degrees today." },
+      { h:"度", p:"dù", pos:"m.", m:"degree (temperature)", ex:"今天最高气温三十度。", exm:"Today's highest temperature is 30 degrees." },
+      { h:"左右", p:"zuǒyòu", pos:"n.", m:"approximately, around, about", ex:"走路二十分钟左右。", exm:"It's about 20 minutes on foot." },
+    ]
+  },
+  {
+    num: 22, zh: "我正在看新闻", en: "I'm Watching the News",
+    words: [
+      { h:"播", p:"bō", pos:"v.", m:"to broadcast, to air", ex:"这个节目几点播？", exm:"What time does this program air?" },
+      { h:"查", p:"chá", pos:"v.", m:"to check, to look up, to investigate", ex:"你帮我查一下这个词。", exm:"Help me look up this word." },
+      { h:"跑步", p:"pǎobù", pos:"v.", m:"to run, to jog", ex:"我每天早上跑步。", exm:"I jog every morning." },
+      { h:"正（在）", p:"zhèng (zài)", pos:"adv.", m:"in the process of, right now (-ing)", ex:"我正在看新闻。", exm:"I am watching the news right now." },
+      { h:"马上", p:"mǎshàng", pos:"adv.", m:"at once, immediately, right away", ex:"我马上来！", exm:"I'll be right there!" },
+      { h:"先", p:"xiān", pos:"adv.", m:"first (before other things)", ex:"你先说，我后说。", exm:"You speak first, I'll speak after." },
+      { h:"一边", p:"yībiān", pos:"adv.", m:"while…at the same time (simultaneous)", ex:"他一边听音乐，一边做作业。", exm:"He listens to music while doing homework." },
+      { h:"还是", p:"háishi", pos:"adv.", m:"still, as before; had better", ex:"你还是好好学习吧。", exm:"You'd better study hard." },
+      { h:"比赛", p:"bǐsài", pos:"n.", m:"match, competition, game", ex:"今天有足球比赛。", exm:"There is a soccer match today." },
+      { h:"电视剧", p:"diànshìjù", pos:"n.", m:"TV drama/series", ex:"我喜欢看中国电视剧。", exm:"I like watching Chinese TV dramas." },
+      { h:"电子邮件", p:"diànzǐ yóujiàn", pos:"n.", m:"email, electronic mail", ex:"我给老师发了一封电子邮件。", exm:"I sent an email to the teacher." },
+      { h:"新闻", p:"xīnwén", pos:"n.", m:"news", ex:"我每天看新闻。", exm:"I watch the news every day." },
+      { h:"操场", p:"cāochǎng", pos:"n.", m:"sports field, playground", ex:"学生们在操场上跑步。", exm:"Students are jogging on the sports field." },
+      { h:"太极拳", p:"tàijíquán", pos:"n.", m:"tai chi (martial art)", ex:"很多老人在公园练太极拳。", exm:"Many elderly people practice tai chi in the park." },
+      { h:"体育", p:"tǐyù", pos:"n.", m:"sports, physical education", ex:"我对体育很感兴趣。", exm:"I am very interested in sports." },
+      { h:"台", p:"tái", pos:"n.", m:"channel (TV); platform; table", ex:"你看的是哪个台？", exm:"Which channel are you watching?" },
+      { h:"那些", p:"nàxiē", pos:"pron.", m:"those", ex:"那些学生都是留学生。", exm:"Those students are all international students." },
+      { h:"一些", p:"yīxiē", pos:"pron.", m:"some, a few, a number of", ex:"我想买一些水果。", exm:"I want to buy some fruit." },
+    ]
+  },
+  {
+    num: 23, zh: "时间过得真快", en: "Time Flies",
+    words: [
+      { h:"爱", p:"ài", pos:"v.", m:"to love; to like", ex:"我爱我的家人。", exm:"I love my family." },
+      { h:"进步", p:"jìnbù", pos:"v.", m:"to make progress, to improve", ex:"你的汉语进步很大！", exm:"Your Chinese has improved a lot!" },
+      { h:"庆祝", p:"qìngzhù", pos:"v.", m:"to celebrate", ex:"我们庆祝学期结束。", exm:"We celebrate the end of the semester." },
+      { h:"开", p:"kāi", pos:"v.", m:"to open; to hold (party/meeting)", ex:"学校开了一个晚会。", exm:"The school held an evening party." },
+      { h:"想到", p:"xiǎngdào", pos:"v.", m:"to think of, to come up with", ex:"我想到了一个好主意。", exm:"I thought of a good idea." },
+      { h:"得", p:"de", pos:"part.", m:"complement particle (manner/degree)", ex:"他汉语说得很好。", exm:"He speaks Chinese very well." },
+      { h:"开心", p:"kāixīn", pos:"adj.", m:"happy, joyful, in a good mood", ex:"今天我很开心！", exm:"I am very happy today!" },
+      { h:"可爱", p:"kě'ài", pos:"adj.", m:"cute, adorable, lovable", ex:"那只小狗真可爱！", exm:"That puppy is so adorable!" },
+      { h:"快", p:"kuài", pos:"adj.", m:"fast, quick; soon", ex:"时间过得真快！", exm:"Time passes so quickly!" },
+      { h:"马马虎虎", p:"mǎmahūhū", pos:"adj.", m:"so-so, just OK, careless", ex:"你的汉语怎么样？—马马虎虎。", exm:"How is your Chinese? — So-so." },
+      { h:"可能", p:"kěnéng", pos:"aux.", m:"maybe, possibly; possible", ex:"明天可能下雨。", exm:"It might rain tomorrow." },
+      { h:"机会", p:"jīhuì", pos:"n.", m:"opportunity, chance", ex:"我们要好好珍惜这个机会。", exm:"We should cherish this opportunity." },
+      { h:"口语", p:"kǒuyǔ", pos:"n.", m:"spoken language, oral Chinese", ex:"我的口语还需要练习。", exm:"My spoken Chinese still needs practice." },
+      { h:"听力", p:"tīnglì", pos:"n.", m:"listening comprehension; hearing", ex:"汉语听力对我来说很难。", exm:"Chinese listening comprehension is hard for me." },
+      { h:"语法", p:"yǔfǎ", pos:"n.", m:"grammar", ex:"这条语法规则很重要。", exm:"This grammar rule is very important." },
+      { h:"晚会", p:"wǎnhuì", pos:"n.", m:"evening party, gala", ex:"学校举办了一个晚会。", exm:"The school held an evening party." },
+      { h:"饺子", p:"jiǎozi", pos:"n.", m:"dumpling (Chinese)", ex:"过年我们吃饺子。", exm:"We eat dumplings during the New Year." },
+      { h:"年", p:"nián", pos:"n.", m:"year", ex:"我在中国学习了一年。", exm:"I studied in China for one year." },
+      { h:"手续", p:"shǒuxù", pos:"n.", m:"procedures, formalities", ex:"签证手续办好了吗？", exm:"Have you completed the visa procedures?" },
+      { h:"那么", p:"nàme", pos:"pron.", m:"so, then; like that", ex:"你那么努力，一定会成功。", exm:"You're so hardworking, you'll definitely succeed." },
+      { h:"哪里", p:"nǎlǐ", pos:"pron.", m:"where; (polite: you flatter me)", ex:"你的汉语说得真好！—哪里哪里。", exm:"Your Chinese is so good! — Not at all." },
+      { h:"自己", p:"zìjǐ", pos:"pron.", m:"oneself, yourself, himself", ex:"你要自己做作业。", exm:"You have to do the homework yourself." },
+    ]
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  Inline pinyin lookup — all characters used in example sentences
+// ═══════════════════════════════════════════════════════════════
+const PINYIN_MAP = {"一":"yī","七":"qī","三":"sān","上":"shàng","下":"xià","不":"bù","业":"yè","东":"dōng","两":"liǎng","个":"gè","中":"zhōng","为":"wèi","主":"zhǔ","举":"jǔ","么":"me","乐":"lè","乒":"pīng","乓":"pāng","九":"jiǔ","也":"yě","习":"xí","书":"shū","买":"mǎi","乱":"luàn","了":"le","事":"shì","二":"èr","互":"hù","五":"wǔ","些":"xiē","京":"jīng","亮":"liàng","人":"rén","什":"shén","今":"jīn","从":"cóng","他":"tā","以":"yǐ","们":"men","件":"jiàn","份":"fèn","休":"xiū","会":"huì","伴":"bàn","低":"dī","住":"zhù","体":"tǐ","作":"zuò","你":"nǐ","便":"pián","保":"bǎo","修":"xiū","候":"hòu","假":"jiǎ","做":"zuò","儿":"ér","先":"xiān","八":"bā","公":"gōng","六":"liù","共":"gòng","关":"guān","兴":"xīng","再":"zài","写":"xiě","冬":"dōng","冷":"lěng","净":"jìng","准":"zhǔn","几":"jǐ","出":"chū","分":"fēn","则":"zé","刚":"gāng","别":"bié","到":"dào","刻":"kè","前":"qián","剧":"jù","力":"lì","办":"bàn","功":"gōng","务":"wù","助":"zhù","努":"nǔ","包":"bāo","化":"huà","北":"běi","区":"qū","十":"shí","午":"wǔ","半":"bàn","卖":"mài","卫":"wèi","厅":"tīng","原":"yuán","厨":"chú","去":"qù","参":"cān","友":"yǒu","发":"fā","口":"kǒu","古":"gǔ","只":"zhǐ","叫":"jiào","可":"kě","台":"tái","右":"yòu","号":"hào","司":"sī","吃":"chī","同":"tóng","名":"míng","后":"hòu","吗":"ma","吧":"ba","听":"tīng","告":"gào","呢":"ne","周":"zhōu","味":"wèi","和":"hé","咱":"zán","哥":"gē","哦":"ó","哪":"nǎ","啊":"a","喜":"xǐ","四":"sì","回":"huí","因":"yīn","园":"yuán","国":"guó","图":"tú","圣":"shèng","在":"zài","地":"dì","场":"chǎng","坏":"huài","坐":"zuò","块":"kuài","墙":"qiáng","夏":"xià","外":"wài","多":"duō","大":"dà","天":"tiān","太":"tài","头":"tóu","女":"nǚ","她":"tā","好":"hǎo","妹":"mèi","始":"shǐ","姐":"jiě","姓":"xìng","子":"zi","字":"zì","季":"jì","学":"xué","安":"ān","完":"wán","定":"dìng","宜":"yí","客":"kè","室":"shì","宫":"gōng","家":"jiā","容":"róng","宿":"sù","对":"duì","封":"fēng","小":"xiǎo","少":"shǎo","就":"jiù","局":"jú","层":"céng","屋":"wū","岁":"suì","工":"gōng","左":"zuǒ","差":"chà","己":"jǐ","已":"yǐ","市":"shì","师":"shī","希":"xī","带":"dài","帮":"bāng","常":"cháng","干":"gàn","年":"nián","广":"guǎng","庆":"qìng","床":"chuáng","店":"diàn","度":"dù","开":"kāi","当":"dāng","录":"lù","很":"hěn","得":"de","心":"xīn","忘":"wàng","忙":"máng","快":"kuài","怎":"zěn","思":"sī","息":"xī","您":"nín","惜":"xī","想":"xiǎng","意":"yì","感":"gǎn","慢":"màn","成":"chéng","我":"wǒ","户":"hù","房":"fáng","所":"suǒ","手":"shǒu","才":"cái","打":"dǎ","找":"zhǎo","把":"bǎ","报":"bào","拳":"quán","拾":"shí","拿":"ná","挂":"guà","换":"huàn","插":"chā","搬":"bān","播":"bō","操":"cāo","收":"shōu","放":"fàng","故":"gù","教":"jiào","整":"zhěng","文":"wén","斤":"jīn","新":"xīn","方":"fāng","旁":"páng","旅":"lǚ","日":"rì","早":"zǎo","时":"shí","明":"míng","易":"yì","星":"xīng","春":"chūn","昨":"zuó","是":"shì","晚":"wǎn","暖":"nuǎn","更":"gèng","最":"zuì","月":"yuè","有":"yǒu","朋":"péng","服":"fú","望":"wàng","期":"qī","末":"mò","本":"běn","机":"jī","束":"shù","条":"tiáo","来":"lái","极":"jí","果":"guǒ","查":"chá","标":"biāo","校":"xiào","样":"yàng","桌":"zhuō","梨":"lí","棒":"bàng","椅":"yǐ","欢":"huān","正":"zhèng","步":"bù","死":"sǐ","母":"mǔ","每":"měi","比":"bǐ","气":"qì","水":"shuǐ","汉":"hàn","汽":"qì","没":"méi","法":"fǎ","泳":"yǒng","津":"jīn","济":"jì","海":"hǎi","温":"wēn","游":"yóu","源":"yuán","满":"mǎn","漂":"piào","点":"diǎn","烤":"kǎo","热":"rè","然":"rán","照":"zhào","爱":"ài","父":"fù","爸":"bà","片":"piàn","特":"tè","狗":"gǒu","王":"wáng","玩":"wán","环":"huán","现":"xiàn","珍":"zhēn","班":"bān","球":"qiú","瓶":"píng","甜":"tián","生":"shēng","用":"yòng","电":"diàn","男":"nán","留":"liú","疼":"téng","病":"bìng","的":"de","目":"mù","相":"xiāng","看":"kàn","真":"zhēn","着":"zhe","睡":"shuì","知":"zhī","码":"mǎ","碰":"pèng","祝":"zhù","离":"lí","秋":"qiū","种":"zhǒng","租":"zū","穿":"chuān","窗":"chuāng","等":"děng","签":"qiān","算":"suàn","管":"guǎn","系":"xì","素":"sù","累":"lèi","练":"liàn","经":"jīng","结":"jié","给":"gěi","续":"xù","网":"wǎng","美":"měi","老":"lǎo","聊":"liáo","肉":"ròu","育":"yù","胜":"shèng","能":"néng","脑":"nǎo","自":"zì","舍":"shě","舒":"shū","色":"sè","节":"jié","英":"yīng","苹":"píng","菜":"cài","萄":"táo","葡":"pú","虎":"hǔ","行":"xíng","街":"jiē","衣":"yī","西":"xī","要":"yào","见":"jiàn","观":"guān","规":"guī","视":"shì","觉":"jué","解":"jiě","认":"rèn","许":"xǔ","证":"zhèng","识":"shí","词":"cí","试":"shì","话":"huà","诞":"dàn","语":"yǔ","说":"shuō","请":"qǐng","课":"kè","谁":"shuí","谢":"xiè","贴":"tiē","贵":"guì","赛":"sài","走":"zǒu","起":"qǐ","超":"chāo","趟":"tàng","趣":"qù","足":"zú","跑":"pǎo","跟":"gēn","路":"lù","踢":"tī","车":"chē","边":"biān","过":"guò","迎":"yíng","近":"jìn","还":"hái","这":"zhè","进":"jìn","远":"yuǎn","迟":"chí","迹":"jì","透":"tòu","递":"dì","逛":"guàng","道":"dào","那":"nà","邮":"yóu","都":"dōu","里":"lǐ","重":"zhòng","钟":"zhōng","钱":"qián","银":"yín","错":"cuò","长":"cháng","门":"mén","问":"wèn","间":"jiān","闻":"wén","附":"fù","难":"nán","雨":"yǔ","零":"líng","需":"xū","面":"miàn","韩":"hán","音":"yīn","预":"yù","题":"tí","餐":"cān","饭":"fàn","饺":"jiǎo","馆":"guǎn","马":"mǎ","骑":"qí","高":"gāo","鸭":"yā","齐":"qí"};
+
+function isChinese(ch) {
+  return /[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/.test(ch);
+}
+
+function findWordInSentence(sentence, h) {
+  const candidates = [
+    h,
+    h.replace(/[（(][^）)]*[）)]/g, ''),          // remove parens: 没（有）→ 没
+    h.replace(/[（(]/g,'').replace(/[）)]/g,''),   // flatten: 没（有）→ 没有
+    h.split('/')[0].trim(),                         // before slash: 日/号 → 日
+    h.replace(/[…·\/]/g,'').replace(/[（(][^）)]*[）)]/g,''),
+  ].filter(w => w.length > 0);
+
+  for (const c of candidates) {
+    const idx = sentence.indexOf(c);
+    if (idx >= 0) return { start: idx, len: c.length };
+  }
+  return { start: -1, len: 0 };
+}
+
+function buildExampleHtml(sentence, wordH) {
+  const { start, len } = findWordInSentence(sentence, wordH);
+  const chars = [...sentence];
+  let html = '';
+  for (let i = 0; i < chars.length; i++) {
+    const ch = chars[i];
+    const inWord = start >= 0 && i >= start && i < start + len;
+    if (inWord) {
+      if (i === start) html += '<strong class="ex-word">';
+      html += ch;
+      if (i === start + len - 1) html += '</strong>';
+    } else if (isChinese(ch)) {
+      const py = PINYIN_MAP[ch] || '';
+      html += `<ruby>${ch}<rt>${py}</rt></ruby>`;
+    } else {
+      html += ch;
+    }
+  }
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Japanese equivalents  (word + reading in hiragana/katakana)
+// ═══════════════════════════════════════════════════════════════
+const JAPANESE = {
+  "你": "あなた (あなた)",
+  "好": "良い (よい)",
+  "老师": "先生 (せんせい)",
+  "您": "あなた様 (あなたさま)",
+  "你们": "あなたたち (あなたたち)",
+  "们": "たち・ら (たち・ら)",
+  "再见": "さようなら (さようなら)",
+  "早上": "朝 (あさ)",
+  "谢谢": "ありがとう (ありがとう)",
+  "不客气": "どういたしまして (どういたしまして)",
+  "对不起": "ごめんなさい (ごめんなさい)",
+  "没关系": "大丈夫 (だいじょうぶ)",
+  "今天": "今日 (きょう)",
+  "明天": "明日 (あした)",
+  "星期一": "月曜日 (げつようび)",
+  "星期二": "火曜日 (かようび)",
+  "星期六": "土曜日 (どようび)",
+  "星期日": "日曜日 (にちようび)",
+  "月": "月 (つき・がつ)",
+  "日/号": "日 (にち・か)",
+  "八": "八 (はち)",
+  "九": "九 (きゅう)",
+  "我": "私 (わたし)",
+  "我们": "私たち (わたしたち)",
+  "他": "彼 (かれ)",
+  "是": "です・だ (です・だ)",
+  "姓": "姓 (せい・みょうじ)",
+  "叫": "〜という (〜という)",
+  "认识": "知る・会う (しる・あう)",
+  "人": "人 (ひと)",
+  "朋友": "友達 (ともだち)",
+  "高兴": "嬉しい (うれしい)",
+  "很": "とても (とても)",
+  "也": "も (も)",
+  "她": "彼女 (かのじょ)",
+  "哪": "どの・どこ (どの・どこ)",
+  "什么": "何 (なに・なん)",
+  "谁": "誰 (だれ)",
+  "呢": "ね (ね)",
+  "吗": "か (か)",
+  "不": "〜ない (〜ない)",
+  "学习": "勉強する (べんきょうする)",
+  "学生": "学生 (がくせい)",
+  "汉语": "中国語 (ちゅうごくご)",
+  "国": "国 (くに)",
+  "经济": "経済 (けいざい)",
+  "名字": "名前 (なまえ)",
+  "有": "ある・いる (ある・いる)",
+  "没（有）": "ない (ない)",
+  "多少": "いくつ・いくら (いくつ・いくら)",
+  "几": "いくつ (いくつ)",
+  "和": "と (と)",
+  "还": "まだ・も (まだ・も)",
+  "对": "正しい・〜に対して (ただしい・〜にたいして)",
+  "班": "クラス (くらす)",
+  "家": "家・うち (いえ・うち)",
+  "哥哥": "お兄さん (おにいさん)",
+  "姐姐": "お姉さん (おねえさん)",
+  "妹妹": "妹 (いもうと)",
+  "男生": "男子学生 (だんしがくせい)",
+  "女生": "女子学生 (じょしがくせい)",
+  "个": "個・人 (こ・にん)",
+  "口": "人 (にん)",
+  "买": "買う (かう)",
+  "卖": "売る (うる)",
+  "想": "思う・したい (おもう・したい)",
+  "贵": "高い (たかい)",
+  "便宜": "安い (やすい)",
+  "好吃": "美味しい (おいしい)",
+  "那": "それ・あれ (それ・あれ)",
+  "别的": "他の (ほかの)",
+  "了": "〜た (〜た)",
+  "太…了": "〜すぎる (〜すぎる)",
+  "钱": "お金 (おかね)",
+  "水": "水 (みず)",
+  "梨": "梨 (なし)",
+  "葡萄": "ぶどう (ぶどう)",
+  "面包": "パン (ぱん)",
+  "斤": "斤 (きん)",
+  "瓶": "瓶・本 (びん・ほん)",
+  "块（元）": "元 (げん)",
+  "种": "種類 (しゅるい)",
+  "在": "いる・ある・〜で (いる・ある・〜で)",
+  "看": "見る (みる)",
+  "请问": "すみません (すみません)",
+  "就": "すぐ・ちょうど (すぐ・ちょうど)",
+  "远": "遠い (とおい)",
+  "哪儿": "どこ (どこ)",
+  "超市": "スーパー (すーぱー)",
+  "学校": "学校 (がっこう)",
+  "邮局": "郵便局 (ゆうびんきょく)",
+  "地方": "場所 (ばしょ)",
+  "附近": "近く (ちかく)",
+  "对面": "向かい (むかい)",
+  "前边": "前 (まえ)",
+  "后边": "後ろ (うしろ)",
+  "旁边": "隣・そば (となり・そば)",
+  "里（边）": "中 (なか)",
+  "去": "行く (いく)",
+  "玩儿": "遊ぶ (あそぶ)",
+  "放假": "休暇・休みになる (きゅうか・やすみになる)",
+  "的": "の (の)",
+  "哦": "ああ・そうか (ああ・そうか)",
+  "没问题": "問題ない (もんだいない)",
+  "今年": "今年 (ことし)",
+  "生日": "誕生日 (たんじょうび)",
+  "教室": "教室 (きょうしつ)",
+  "电脑": "パソコン (ぱそこん)",
+  "课": "授業 (じゅぎょう)",
+  "咱们": "私たち (わたしたち)",
+  "上课": "授業に出る (じゅぎょうにでる)",
+  "下课": "授業が終わる (じゅぎょうがおわる)",
+  "起床": "起きる (おきる)",
+  "睡觉": "寝る (ねる)",
+  "吃": "食べる (たべる)",
+  "回": "帰る (かえる)",
+  "回来": "帰ってくる (かえってくる)",
+  "休息": "休む (やすむ)",
+  "差": "足りない・〜前 (たりない・〜まえ)",
+  "吧": "ね・よ (ね・よ)",
+  "晚": "遅い (おそい)",
+  "长": "長い (ながい)",
+  "每": "毎〜 (まい〜)",
+  "现在": "今 (いま)",
+  "时间": "時間 (じかん)",
+  "时候": "時 (とき)",
+  "上午": "午前 (ごぜん)",
+  "晚饭": "夕食・晩ごはん (ゆうしょく・ばんごはん)",
+  "晚安": "おやすみなさい (おやすみなさい)",
+  "公司": "会社 (かいしゃ)",
+  "天": "日・空 (にち・そら)",
+  "点": "〜時 (〜じ)",
+  "分": "分 (ふん・ぷん)",
+  "分钟": "〜分間 (〜ふんかん)",
+  "刻": "15分 (じゅうごふん)",
+  "节": "時限・コマ (じげん・こま)",
+  "多长": "どのくらい (どのくらい)",
+  "多": "多い・〜以上 (おおい・〜いじょう)",
+  "住": "住む (すむ)",
+  "来": "来る (くる)",
+  "离": "〜から離れている (〜からはなれている)",
+  "骑": "乗る (のる)",
+  "走路": "歩く (あるく)",
+  "坐": "座る・乗る (すわる・のる)",
+  "大": "大きい (おおきい)",
+  "近": "近い (ちかい)",
+  "漂亮": "きれい (きれい)",
+  "忙": "忙しい (いそがしい)",
+  "都": "みんな・全部 (みんな・ぜんぶ)",
+  "啊": "ああ・ね (ああ・ね)",
+  "留学生": "留学生 (りゅうがくせい)",
+  "宿舍": "寮 (りょう)",
+  "路": "道・通り (みち・とおり)",
+  "小区": "住宅地 (じゅうたくち)",
+  "小时": "〜時間 (〜じかん)",
+  "外边": "外 (そと)",
+  "最近": "最近 (さいきん)",
+  "公共汽车": "バス (ばす)",
+  "喜欢": "好き・好きだ (すき・すきだ)",
+  "工作": "仕事・働く (しごと・はたらく)",
+  "感兴趣": "興味がある (きょうみがある)",
+  "可以": "できる・いい (できる・いい)",
+  "最": "一番 (いちばん)",
+  "从…到…": "〜から〜まで (〜から〜まで)",
+  "为什么": "なぜ・どうして (なぜ・どうして)",
+  "电话": "電話 (でんわ)",
+  "手机": "スマホ (すまほ)",
+  "电视": "テレビ (てれび)",
+  "广告": "広告 (こうこく)",
+  "节目": "番組 (ばんぐみ)",
+  "同事": "同僚 (どうりょう)",
+  "名片": "名刺 (めいし)",
+  "号码": "番号 (ばんごう)",
+  "房间": "部屋 (へや)",
+  "兴趣": "興味・趣味 (きょうみ・しゅみ)",
+  "说": "話す・言う (はなす・いう)",
+  "旅行": "旅行 (りょこう)",
+  "踢": "蹴る (ける)",
+  "打": "する・打つ (する・うつ)",
+  "游泳": "泳ぐ (およぐ)",
+  "过": "〜たことがある (〜たことがある)",
+  "还是": "それとも・やはり (それとも・やはり)",
+  "当然": "もちろん (もちろん)",
+  "可是": "でも・しかし (でも・しかし)",
+  "爱好": "趣味 (しゅみ)",
+  "汉字": "漢字 (かんじ)",
+  "西餐": "洋食 (ようしょく)",
+  "饭馆": "レストラン (れすとらん)",
+  "大家": "みんな・皆さん (みんな・みなさん)",
+  "那儿": "そこ・あそこ (そこ・あそこ)",
+  "去年": "去年 (きょねん)",
+  "网球": "テニス (てにす)",
+  "搬（家）": "引っ越す (ひっこす)",
+  "办": "処理する・する (しょりする・する)",
+  "参观": "見学する (けんがくする)",
+  "到": "着く (つく)",
+  "进": "入る (はいる)",
+  "请": "どうぞ・招く (どうぞ・まねく)",
+  "干净": "きれい・清潔 (きれい・せいけつ)",
+  "没意思": "つまらない (つまらない)",
+  "层": "階 (かい)",
+  "客厅": "リビング・居間 (りびんぐ・いま)",
+  "厨房": "キッチン・台所 (きっちん・だいどころ)",
+  "卫生间": "トイレ・お手洗い (とれい・おてあらい)",
+  "餐厅": "食堂・ダイニング (しょくどう・だいにんぐ)",
+  "房租": "家賃 (やちん)",
+  "号": "号・番号 (ごう・ばんごう)",
+  "同屋": "ルームメート (るーむめーと)",
+  "别人": "他の人・他人 (ほかのひと・たにん)",
+  "这儿": "ここ (ここ)",
+  "右边": "右 (みぎ)",
+  "左边": "左 (ひだり)",
+  "碰见": "ばったり会う (ばったりあう)",
+  "极（了）": "非常に・すごく (ひじょうに・すごく)",
+  "好玩儿": "楽しい (たのしい)",
+  "有名": "有名 (ゆうめい)",
+  "少": "少ない (すくない)",
+  "老": "古い・年をとった / いつも (ふるい・としをとった / いつも)",
+  "为了": "〜のために (〜のために)",
+  "一…就…": "〜たらすぐ (〜たらすぐ)",
+  "什么的": "など・とか (など・とか)",
+  "周末": "週末 (しゅうまつ)",
+  "特色": "特色・特産 (とくしょく・とくさん)",
+  "菜": "料理・野菜 (りょうり・やさい)",
+  "素菜": "野菜料理 (やさいりょうり)",
+  "肉": "肉 (にく)",
+  "包子": "肉まん (にくまん)",
+  "味道": "味 (あじ)",
+  "环保": "エコ・環境に優しい (えこ・かんきょうにやさしい)",
+  "趟": "〜回 (〜かい)",
+  "会": "できる・〜られる (できる・〜られる)",
+  "能": "できる・〜られる (できる・〜られる)",
+  "教": "教える (おしえる)",
+  "帮助": "助ける・手伝う (たすける・てつだう)",
+  "打工": "アルバイト (あるばいと)",
+  "发音": "発音 (はつおん)",
+  "开始": "始める・始まる (はじめる・はじまる)",
+  "了解": "理解する・知る (りかいする・しる)",
+  "聊天儿": "おしゃべりする (おしゃべりする)",
+  "觉得": "思う・感じる (おもう・かんじる)",
+  "写": "書く (かく)",
+  "知道": "知っている (しっている)",
+  "容易": "簡単 (かんたん)",
+  "难": "難しい (むずかしい)",
+  "方便": "便利 (べんり)",
+  "互相": "お互いに (おたがいに)",
+  "文化": "文化 (ぶんか)",
+  "语伴": "語学パートナー (ごがくぱーとなー)",
+  "英语": "英語 (えいご)",
+  "份": "〜枚・〜部 (〜まい・〜ぶ)",
+  "过（节）": "祝う (いわう)",
+  "结束": "終わる (おわる)",
+  "打算": "〜つもり (〜つもり)",
+  "听说": "〜らしい・聞くと (〜らしい・きくと)",
+  "快…了": "もうすぐ〜 (もうすぐ〜)",
+  "（就）要…了": "もうすぐ〜する (もうすぐ〜する)",
+  "要是": "もし〜なら (もし〜なら)",
+  "也许": "たぶん・もしかしたら (たぶん・もしかしたら)",
+  "父母": "両親 (りょうしん)",
+  "节（日）": "祭日・祝日 (さいじつ・しゅくじつ)",
+  "名胜古迹": "名所旧跡 (めいしょきゅうせき)",
+  "听": "聞く (きく)",
+  "干": "する・やる (する・やる)",
+  "病": "病気 (びょうき)",
+  "累": "疲れた (つかれた)",
+  "疼": "痛い (いたい)",
+  "那": "それなら・じゃあ (それなら・じゃあ)",
+  "给": "あげる・に (あげる・に)",
+  "跟": "と一緒に (といっしょに)",
+  "音乐": "音楽 (おんがく)",
+  "中文": "中国語 (ちゅうごくご)",
+  "看法": "意見・見方 (いけん・みかた)",
+  "头": "頭 (あたま)",
+  "作业": "宿題 (しゅくだい)",
+  "修": "直す・修理する (なおす・しゅうりする)",
+  "开机": "電源を入れる (でんげんをいれる)",
+  "死机": "フリーズする (ふりーずする)",
+  "试": "試す (ためす)",
+  "完": "終える・終わる (おえる・おわる)",
+  "忘": "忘れる (わすれる)",
+  "问": "聞く・尋ねる (きく・たずねる)",
+  "拿": "持つ (もつ)",
+  "帮（忙）": "手伝う (てつだう)",
+  "打开": "開ける・つける (あける・つける)",
+  "用": "使う (つかう)",
+  "服务": "サービス (さーびす)",
+  "已经": "もう・すでに (もう・すでに)",
+  "满": "いっぱい (いっぱい)",
+  "刚才": "さっき (さっき)",
+  "电源": "電源 (でんげん)",
+  "快递": "宅配便 (たくはいびん)",
+  "包": "バッグ・袋 (ばっぐ・ふくろ)",
+  "书店": "本屋 (ほんや)",
+  "把": "を〜する (を〜する)",
+  "挂": "掛ける (かける)",
+  "贴": "貼る (はる)",
+  "放": "置く (おく)",
+  "换": "換える (かえる)",
+  "欢迎": "ようこそ・歓迎 (ようこそ・かんげい)",
+  "收拾": "片付ける (かたづける)",
+  "看见": "見える・見かける (みえる・みかける)",
+  "棒": "すごい・素晴らしい (すごい・すばらしい)",
+  "整齐": "きれい・整った (きれい・ととのった)",
+  "乱": "散らかっている (ちらかっている)",
+  "舒服": "気持ちいい (きもちいい)",
+  "墙": "壁 (かべ)",
+  "窗户": "窓 (まど)",
+  "门": "ドア・門 (どあ・もん)",
+  "桌子": "机・テーブル (つくえ・てーぶる)",
+  "椅子": "椅子 (いす)",
+  "照片": "写真 (しゃしん)",
+  "主意": "アイデア・考え (あいであ・かんがえ)",
+  "以前": "以前・前 (いぜん・まえ)",
+  "希望": "希望する・〜といいな (きぼうする・〜といいな)",
+  "见": "会う (あう)",
+  "预报": "予報 (よほう)",
+  "高": "高い (たかい)",
+  "低": "低い (ひくい)",
+  "冷": "寒い (さむい)",
+  "差不多": "だいたい・ほぼ (だいたい・ほぼ)",
+  "常常": "よく・しばしば (よく・しばしば)",
+  "才": "やっと・〜だけ (やっと・〜だけ)",
+  "更": "もっと・さらに (もっと・さらに)",
+  "所以": "だから (だから)",
+  "因为": "から・ので (から・ので)",
+  "天气": "天気 (てんき)",
+  "气温": "気温 (きおん)",
+  "季节": "季節 (きせつ)",
+  "春天": "春 (はる)",
+  "夏天": "夏 (なつ)",
+  "秋天": "秋 (あき)",
+  "冬天": "冬 (ふゆ)",
+  "国家": "国 (くに)",
+  "零下": "氷点下 (ひょうてんか)",
+  "度": "度 (ど)",
+  "左右": "〜くらい (〜くらい)",
+  "播": "放送する (ほうそうする)",
+  "查": "調べる (しらべる)",
+  "跑步": "走る・ジョギング (はしる・じょぎんぐ)",
+  "正（在）": "〜ている (〜ている)",
+  "马上": "すぐに (すぐに)",
+  "先": "先に・まず (さきに・まず)",
+  "一边": "〜ながら (〜ながら)",
+  "比赛": "試合・競争 (しあい・きょうそう)",
+  "电视剧": "ドラマ (どらま)",
+  "电子邮件": "メール・電子メール (めーる・でんしめーる)",
+  "新闻": "ニュース (にゅーす)",
+  "操场": "校庭・グラウンド (こうてい・ぐらうんど)",
+  "太极拳": "太極拳 (たいきょくけん)",
+  "体育": "体育 (たいいく)",
+  "台": "チャンネル (ちゃんねる)",
+  "那些": "あれら・あの (あれら・あの)",
+  "一些": "いくつか・少し (いくつか・すこし)",
+  "爱": "愛する・好き (あいする・すき)",
+  "进步": "上達する (じょうたつする)",
+  "庆祝": "祝う (いわう)",
+  "开": "開く・開催する (ひらく・かいさいする)",
+  "想到": "思いつく (おもいつく)",
+  "得": "〜に・〜く (〜に・〜く)",
+  "开心": "楽しい・うれしい (たのしい・うれしい)",
+  "可爱": "かわいい (かわいい)",
+  "快": "速い (はやい)",
+  "马马虎虎": "まあまあ (まあまあ)",
+  "可能": "かもしれない (かもしれない)",
+  "机会": "機会・チャンス (きかい・ちゃんす)",
+  "口语": "口語・会話 (こうご・かいわ)",
+  "听力": "リスニング (りすにんぐ)",
+  "语法": "文法 (ぶんぽう)",
+  "晚会": "パーティー (ぱーてぃー)",
+  "饺子": "餃子 (ぎょうざ)",
+  "年": "年 (ねん・とし)",
+  "手续": "手続き (てつづき)",
+  "那么": "そんなに・じゃあ (そんなに・じゃあ)",
+  "哪里": "どこ・いえいえ (どこ・いえいえ)",
+  "自己": "自分 (じぶん)",
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  Gloss dictionary  (built from vocab + extra common words)
+// ═══════════════════════════════════════════════════════════════
+const GLOSS_DICT = {};
+(function buildGlossDict() {
+  for (const ch of CHAPTERS) {
+    for (const w of ch.words) {
+      const k = w.h;
+      if (!GLOSS_DICT[k]) GLOSS_DICT[k] = { p: w.p, m: w.m };
+      // Flatten parens: 没（有）→ 没有
+      const flat = k.replace(/（([^）]*)）/g, '$1');
+      if (flat !== k && !GLOSS_DICT[flat]) GLOSS_DICT[flat] = { p: w.p, m: w.m };
+      // Strip parens: 没（有）→ 没
+      const strip = k.replace(/（[^）]*）/g, '');
+      if (strip !== k && strip && !GLOSS_DICT[strip]) GLOSS_DICT[strip] = { p: w.p, m: w.m };
+      // Handle slash: 日/号 → 日, 号
+      if (k.includes('/')) {
+        for (const part of k.split('/')) {
+          const p = part.trim();
+          if (p && !GLOSS_DICT[p]) GLOSS_DICT[p] = { p: w.p, m: w.m };
+        }
+      }
+    }
+  }
+  // Overrides & extra common words not in vocab
+  Object.assign(GLOSS_DICT, {
+    "多":  { p:"duō",  m:"many/much" },
+    "没":  { p:"méi",  m:"not/didn't" },
+    "没有":{ p:"méiyǒu", m:"don't have" },
+    // numbers
+    "一":  { p:"yī",   m:"one" },
+    "二":  { p:"èr",   m:"two" },
+    "三":  { p:"sān",  m:"three" },
+    "四":  { p:"sì",   m:"four" },
+    "五":  { p:"wǔ",   m:"five" },
+    "六":  { p:"liù",  m:"six" },
+    "七":  { p:"qī",   m:"seven" },
+    "十":  { p:"shí",  m:"ten" },
+    "两":  { p:"liǎng",m:"two/both" },
+    "半":  { p:"bàn",  m:"half" },
+    "零":  { p:"líng", m:"zero" },
+    // verbs
+    "要":  { p:"yào",  m:"want/will" },
+    "从":  { p:"cóng", m:"from" },
+    "做":  { p:"zuò",  m:"do/make" },
+    "找":  { p:"zhǎo", m:"find" },
+    "走":  { p:"zǒu",  m:"walk/go" },
+    "等":  { p:"děng", m:"wait" },
+    "关":  { p:"guān", m:"close/shut" },
+    "插":  { p:"chā",  m:"plug in" },
+    "穿":  { p:"chuān",m:"wear" },
+    "发":  { p:"fā",   m:"send" },
+    "练":  { p:"liàn", m:"practice" },
+    "带":  { p:"dài",  m:"bring/carry" },
+    "收到":{ p:"shōudào", m:"receive" },
+    "需要":{ p:"xūyào", m:"need" },
+    "练习":{ p:"liànxí", m:"practice" },
+    "下雨":{ p:"xiàyǔ", m:"rain" },
+    "出去":{ p:"chūqù", m:"go out" },
+    "迟到":{ p:"chídào", m:"be late" },
+    "举办":{ p:"jǔbàn", m:"hold/organize" },
+    "珍惜":{ p:"zhēnxī", m:"cherish" },
+    "成功":{ p:"chénggōng", m:"succeed" },
+    // adjectives / adverbs
+    "小":  { p:"xiǎo", m:"small" },
+    "新":  { p:"xīn",  m:"new" },
+    "真":  { p:"zhēn", m:"really" },
+    "热":  { p:"rè",   m:"hot" },
+    "美":  { p:"měi",  m:"beautiful" },
+    "太":  { p:"tài",  m:"too/very" },
+    "只":  { p:"zhǐ",  m:"only" },
+    "比":  { p:"bǐ",   m:"than" },
+    "别":  { p:"bié",  m:"don't" },
+    "地":  { p:"de",   m:"-ly particle" },
+    "好好":{ p:"hǎohǎo", m:"properly" },
+    "不错":{ p:"búcuò", m:"not bad" },
+    "暖和":{ p:"nuǎnhuo", m:"warm" },
+    "重要":{ p:"zhòngyào", m:"important" },
+    "努力":{ p:"nǔlì", m:"work hard" },
+    // common expressions
+    "一起":{ p:"yīqǐ",  m:"together" },
+    "一下":{ p:"yīxià", m:"a moment" },
+    "一共":{ p:"yīgòng", m:"in total" },
+    "一定":{ p:"yīdìng", m:"definitely" },
+    "原来":{ p:"yuánlái", m:"turns out" },
+    "怎么":{ p:"zěnme", m:"how" },
+    "怎么样":{ p:"zěnmeyàng", m:"how about" },
+    "哪些":{ p:"nǎxiē", m:"which ones" },
+    // nouns
+    "书":  { p:"shū",  m:"book" },
+    "饭":  { p:"fàn",  m:"rice/meal" },
+    "上":  { p:"shàng",m:"on/above" },
+    "下":  { p:"xià",  m:"below/next" },
+    "这":  { p:"zhè",  m:"this" },
+    "这里":{ p:"zhèlǐ", m:"here" },
+    "这个":{ p:"zhège", m:"this" },
+    "事":  { p:"shì",  m:"matter/thing" },
+    "词":  { p:"cí",   m:"word" },
+    "球":  { p:"qiú",  m:"ball" },
+    "坏":  { p:"huài", m:"broken/bad" },
+    "着":  { p:"zhe",  m:"ongoing" },
+    "本":  { p:"běn",  m:"[book counter]" },
+    "封":  { p:"fēng", m:"[letter counter]" },
+    "道":  { p:"dào",  m:"[dish counter]" },
+    "条":  { p:"tiáo", m:"[strip counter]" },
+    "件":  { p:"jiàn", m:"[item counter]" },
+    "大学生":{ p:"dàxuéshēng", m:"university student" },
+    "大学":  { p:"dàxué",    m:"university" },
+    "图书馆":{ p:"túshūguǎn", m:"library" },
+    "银行":  { p:"yínháng",  m:"bank" },
+    "公园":  { p:"gōngyuán", m:"park" },
+    "自行车":{ p:"zìxíngchē", m:"bicycle" },
+    "足球":  { p:"zúqiú",    m:"soccer" },
+    "乒乓球":{ p:"pīngpāngqiú", m:"pingpong" },
+    "水果":  { p:"shuǐguǒ",  m:"fruit" },
+    "苹果":  { p:"píngguǒ",  m:"apple" },
+    "中餐":  { p:"zhōngcān", m:"Chinese food" },
+    "早饭":  { p:"zǎofàn",   m:"breakfast" },
+    "邮件":  { p:"yóujiàn",  m:"email" },
+    "问题":  { p:"wèntí",    m:"question/problem" },
+    "家人":  { p:"jiārén",   m:"family member" },
+    "衣服":  { p:"yīfu",     m:"clothes" },
+    "学期":  { p:"xuéqī",    m:"semester" },
+    "同学":  { p:"tóngxué",  m:"classmate" },
+    "小狗":  { p:"xiǎogǒu",  m:"puppy" },
+    "地图":  { p:"dìtú",     m:"map" },
+    "录音":  { p:"lùyīn",    m:"recording" },
+    "签证":  { p:"qiānzhèng", m:"visa" },
+    "方法":  { p:"fāngfǎ",   m:"method" },
+    "规则":  { p:"guīzé",    m:"rule" },
+    "标准":  { p:"biāozhǔn", m:"standard" },
+    "昨天":  { p:"zuótiān",  m:"yesterday" },
+    "中午":  { p:"zhōngwǔ",  m:"noon" },
+  });
+})();
+
+function segmentSentence(sentence) {
+  const result = [];
+  let i = 0;
+  const maxLen = 5;
+  while (i < sentence.length) {
+    let matched = false;
+    for (let len = Math.min(maxLen, sentence.length - i); len >= 1; len--) {
+      const cand = sentence.slice(i, i + len);
+      if (GLOSS_DICT[cand]) {
+        result.push({ text: cand, p: GLOSS_DICT[cand].p, m: GLOSS_DICT[cand].m });
+        i += len;
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) { result.push({ text: sentence[i], p: null, m: null }); i++; }
+  }
+  return result;
+}
+
+function shortM(m) {
+  let s = m.replace(/\([^)]*\)/g, '').replace(/（[^）]*）/g, '').trim();
+  s = s.split(/[,;]/)[0].trim();
+  return s.length > 13 ? s.slice(0, 12) + '…' : s;
+}
+
+function buildGlossHtml(sentence) {
+  const segs = segmentSentence(sentence).filter(s => s.p);
+  if (segs.length < 2) return '';
+  return '<div class="gloss-row">' + segs.map(s =>
+    `<span class="gloss-token"><span class="gloss-hz">${s.text}</span><span class="gloss-py">${s.p}</span><span class="gloss-en">${shortM(s.m)}</span></span>`
+  ).join('') + '</div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  State
+// ═══════════════════════════════════════════════════════════════
+let chapterIdx = 0;
+let cardIdx = 0;
+let readingOpen = false;
+let detailsOpen = false;
+let japaneseOpen = false;
+
+function currentChapter() { return CHAPTERS[chapterIdx]; }
+function currentWord() { return currentChapter().words[cardIdx]; }
+
+// ═══════════════════════════════════════════════════════════════
+//  Render
+// ═══════════════════════════════════════════════════════════════
+function renderSidebar() {
+  const list = document.getElementById('chapterList');
+  list.innerHTML = '';
+  CHAPTERS.forEach((ch, idx) => {
+    const li = document.createElement('li');
+    if (idx === chapterIdx) li.classList.add('active');
+    li.innerHTML = `<button onclick="selectChapter(${idx})">
+      <span class="ch-num">${ch.num}</span>
+      <span class="ch-name">${ch.zh}<small>${ch.en}</small></span>
+      <span class="ch-count">${ch.words.length}</span>
+    </button>`;
+    list.appendChild(li);
+  });
+  const activeEl = list.querySelector('li.active');
+  if (activeEl) activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function renderWordPanel() {
+  const ch = CHAPTERS[chapterIdx];
+  document.getElementById('wordPanelTitle').textContent = `Ch.${ch.num} · ${ch.zh}`;
+  const list = document.getElementById('wordList');
+  list.innerHTML = '';
+  ch.words.forEach((w, idx) => {
+    const li = document.createElement('li');
+    if (idx === cardIdx) li.classList.add('active');
+    const btn = document.createElement('button');
+    btn.innerHTML = `<span class="wl-hz">${w.h}</span><span class="wl-py">${w.p}</span>`;
+    btn.title = w.m;
+    btn.onclick = () => { cardIdx = idx; renderCard(); };
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+  const active = list.querySelector('li.active');
+  if (active) active.scrollIntoView({ block: 'nearest' });
+}
+
+function renderCard() {
+  const ch = currentChapter();
+  const w = currentWord();
+
+  document.getElementById('chapterBadge').textContent =
+    `Chapter ${ch.num}  ·  ${ch.zh}`;
+
+  document.getElementById('hanzi').textContent = w.h;
+
+  const total = ch.words.length;
+  document.getElementById('counter').textContent = `${cardIdx + 1} of ${total}`;
+  document.getElementById('navProgress').textContent = `${cardIdx + 1} / ${total}`;
+
+  document.getElementById('pinyin').textContent = w.p;
+  document.getElementById('pos').textContent = w.pos;
+  document.getElementById('meaning').textContent = w.m;
+
+  const exDiv = document.getElementById('examples');
+  exDiv.innerHTML = '';
+  if (w.ex) {
+    const block = document.createElement('div');
+    block.className = 'example-block';
+    block.innerHTML = `
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div class="example-zh" style="flex:1">${buildExampleHtml(w.ex, w.h)}</div>
+        <button class="btn-speak btn-speak-ex" onclick="speakExample(this)" title="Listen to example sentence" style="margin-top:6px;flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        </button>
+      </div>
+      <div class="example-en">${w.exm}</div>
+      ${buildGlossHtml(w.ex)}`;
+    exDiv.appendChild(block);
+  }
+
+  // Populate Japanese
+  const japWord = JAPANESE[w.h] || '—';
+  document.getElementById('japaneseWord').textContent = japWord;
+
+  // Reset reveal
+  readingOpen = false;
+  detailsOpen = false;
+  japaneseOpen = false;
+  document.getElementById('readingSection').classList.remove('open');
+  document.getElementById('detailsSection').classList.remove('open');
+  document.getElementById('japaneseSection').classList.remove('open');
+  document.getElementById('btnReading').classList.remove('active');
+  document.getElementById('btnDetails').classList.remove('active');
+  document.getElementById('btnJapanese').classList.remove('active');
+  document.getElementById('btnReading').textContent = 'show reading';
+  document.getElementById('btnDetails').textContent = 'show details';
+  document.getElementById('btnJapanese').textContent = 'Japanese';
+
+  document.getElementById('btnPrev').disabled = (chapterIdx === 0 && cardIdx === 0);
+  document.getElementById('btnNext').disabled =
+    (chapterIdx === CHAPTERS.length - 1 && cardIdx === ch.words.length - 1);
+
+  renderSidebar();
+  renderWordPanel();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Actions
+// ═══════════════════════════════════════════════════════════════
+function toggleReading() {
+  readingOpen = !readingOpen;
+  document.getElementById('readingSection').classList.toggle('open', readingOpen);
+  const btn = document.getElementById('btnReading');
+  btn.classList.toggle('active', readingOpen);
+  btn.textContent = readingOpen ? 'hide reading' : 'show reading';
+}
+
+function toggleDetails() {
+  detailsOpen = !detailsOpen;
+  document.getElementById('detailsSection').classList.toggle('open', detailsOpen);
+  const btn = document.getElementById('btnDetails');
+  btn.classList.toggle('active', detailsOpen);
+  btn.textContent = detailsOpen ? 'hide details' : 'show details';
+}
+
+function toggleJapanese() {
+  japaneseOpen = !japaneseOpen;
+  document.getElementById('japaneseSection').classList.toggle('open', japaneseOpen);
+  const btn = document.getElementById('btnJapanese');
+  btn.classList.toggle('active', japaneseOpen);
+  btn.textContent = japaneseOpen ? 'hide Japanese' : 'Japanese';
+}
+
+function nextCard() {
+  const ch = currentChapter();
+  if (cardIdx < ch.words.length - 1) {
+    cardIdx++;
+  } else if (chapterIdx < CHAPTERS.length - 1) {
+    chapterIdx++;
+    cardIdx = 0;
+  }
+  renderCard();
+}
+
+function prevCard() {
+  if (cardIdx > 0) {
+    cardIdx--;
+  } else if (chapterIdx > 0) {
+    chapterIdx--;
+    cardIdx = CHAPTERS[chapterIdx].words.length - 1;
+  }
+  renderCard();
+}
+
+function selectChapter(idx) {
+  chapterIdx = idx;
+  cardIdx = 0;
+  renderCard();
+}
+
+// ── Mobile drawer ──
+function openDrawer() {
+  const drawer = document.getElementById('mobileDrawer');
+  const list = document.getElementById('drawerChapterList');
+  list.innerHTML = '';
+  CHAPTERS.forEach((ch, idx) => {
+    const li = document.createElement('li');
+    if (idx === chapterIdx) li.classList.add('active');
+    li.innerHTML = `<button onclick="selectChapterDrawer(${idx})">
+      <span class="ch-num">${ch.num}</span>
+      <span class="ch-name">${ch.zh}<small>${ch.en}</small></span>
+      <span class="ch-count">${ch.words.length}</span>
+    </button>`;
+    list.appendChild(li);
+  });
+  drawer.classList.add('open');
+  // Scroll active chapter into view
+  const active = list.querySelector('li.active');
+  if (active) setTimeout(() => active.scrollIntoView({ block: 'center' }), 50);
+}
+
+function closeDrawer() {
+  document.getElementById('mobileDrawer').classList.remove('open');
+}
+
+function selectChapterDrawer(idx) {
+  selectChapter(idx);
+  closeDrawer();
+}
+
+function openWordDrawer() {
+  const ch = CHAPTERS[chapterIdx];
+  document.getElementById('wordDrawerTitle').textContent = `Ch.${ch.num} · ${ch.zh}`;
+  const list = document.getElementById('wordDrawerList');
+  list.innerHTML = '';
+  ch.words.forEach((w, idx) => {
+    const li = document.createElement('li');
+    if (idx === cardIdx) li.classList.add('active');
+    const btn = document.createElement('button');
+    btn.innerHTML = `<span class="wl-hz">${w.h}</span><span class="wl-py">${w.p}</span>`;
+    btn.title = w.m;
+    btn.onclick = () => { cardIdx = idx; renderCard(); closeWordDrawer(); };
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+  document.getElementById('wordDrawer').classList.add('open');
+  const active = list.querySelector('li.active');
+  if (active) setTimeout(() => active.scrollIntoView({ block: 'center' }), 50);
+}
+
+function closeWordDrawer() {
+  document.getElementById('wordDrawer').classList.remove('open');
+}
+
+// Close drawers on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeDrawer(); closeWordDrawer(); }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nextCard(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prevCard(); }
+  else if (e.key === 'r' || e.key === 'R') toggleReading();
+  else if (e.key === 'd' || e.key === 'D' || e.key === ' ') { e.preventDefault(); toggleDetails(); }
+});
+
+// ── Text-to-speech (male Mandarin voice) ──
+function speakCurrent() {
+  if (!window.speechSynthesis) return;
+  const text = currentWord().h;
+  const btn = document.getElementById('btnSpeak');
+
+  function doSpeak() {
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'zh-CN';
+    utter.rate = 0.62;  // slow & clear, like a language teacher
+    utter.pitch = 0.88; // lower = male tone
+
+    // Voice priority: Beijing-accent natural male voices first
+    // Yunyang = natural male Beijing (Windows), Kangkang = classic male Beijing (Windows)
+    // Avoid Taiwan/HK voices (Tingting, Sinji) which have different accents
+    const all = window.speechSynthesis.getVoices();
+    const zhCN = all.filter(v => v.lang === 'zh-CN' || v.lang === 'zh_CN');
+    const zhAny = all.filter(v => v.lang.startsWith('zh'));
+
+    const priority = [
+      v => /yunyang/i.test(v.name),         // best: natural Beijing male (Windows)
+      v => /kangkang/i.test(v.name),        // classic Beijing male (Windows)
+      v => /yunjian/i.test(v.name),         // another natural male option
+      v => /male|man|男/i.test(v.name) && (v.lang === 'zh-CN' || v.lang === 'zh_CN'),
+      v => v.lang === 'zh-CN' || v.lang === 'zh_CN', // any mainland voice
+      v => v.lang.startsWith('zh'),          // any Chinese voice as last resort
+    ];
+
+    let chosen = null;
+    for (const test of priority) {
+      chosen = (zhCN.length ? zhCN : zhAny).find(test) || all.find(test);
+      if (chosen) break;
+    }
+    utter.voice = chosen || null;
+
+    utter.onstart = () => btn && btn.classList.add('speaking');
+    utter.onend = utter.onerror = () => btn && btn.classList.remove('speaking');
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+  }
+
+  // Voices may not be loaded yet on first call
+  const voices = window.speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    doSpeak();
+  } else {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.onvoiceschanged = null;
+      doSpeak();
+    };
+  }
+}
+
+// ── Speak example sentence ──
+function speakExample(btn) {
+  if (!window.speechSynthesis) return;
+  const text = currentWord().ex;
+  if (!text) return;
+
+  function doSpeak() {
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'zh-CN';
+    utter.rate = 0.62;
+    utter.pitch = 0.88;
+
+    const all = window.speechSynthesis.getVoices();
+    const zhCN = all.filter(v => v.lang === 'zh-CN' || v.lang === 'zh_CN');
+    const zhAny = all.filter(v => v.lang.startsWith('zh'));
+
+    const priority = [
+      v => /yunyang/i.test(v.name),
+      v => /kangkang/i.test(v.name),
+      v => /yunjian/i.test(v.name),
+      v => /male|man|男/i.test(v.name) && (v.lang === 'zh-CN' || v.lang === 'zh_CN'),
+      v => v.lang === 'zh-CN' || v.lang === 'zh_CN',
+      v => v.lang.startsWith('zh'),
+    ];
+
+    let chosen = null;
+    for (const test of priority) {
+      chosen = (zhCN.length ? zhCN : zhAny).find(test) || all.find(test);
+      if (chosen) break;
+    }
+    utter.voice = chosen || null;
+
+    utter.onstart = () => btn && btn.classList.add('speaking');
+    utter.onend = utter.onerror = () => btn && btn.classList.remove('speaking');
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+  }
+
+  const voices = window.speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    doSpeak();
+  } else {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.onvoiceschanged = null;
+      doSpeak();
+    };
+  }
+}
+
+// ── Speak Japanese equivalent ──
+function speakJapanese() {
+  if (!window.speechSynthesis) return;
+  const text = document.getElementById('japaneseWord').textContent;
+  // Strip the hiragana reading in parentheses — speak just the Japanese word/phrase
+  const spoken = text.replace(/\s*\(.*\)$/, '').trim();
+  if (!spoken || spoken === '—') return;
+  const btn = document.getElementById('btnSpeakJa');
+
+  function doSpeak() {
+    const utter = new SpeechSynthesisUtterance(spoken);
+    utter.lang = 'ja-JP';
+    utter.rate = 0.85;
+    utter.pitch = 0.9;
+
+    const all = window.speechSynthesis.getVoices();
+    const jaVoices = all.filter(v => v.lang === 'ja-JP' || v.lang === 'ja');
+
+    // Prefer natural/neural voices, then any ja-JP
+    const priority = [
+      v => /otoya|ichiro|kyoko|haruka/i.test(v.name) && v.localService,
+      v => jaVoices.includes(v),
+      v => v.lang.startsWith('ja'),
+    ];
+
+    let chosen = null;
+    for (const test of priority) {
+      chosen = all.find(test);
+      if (chosen) break;
+    }
+    utter.voice = chosen || null;
+
+    utter.onstart = () => btn && btn.classList.add('speaking');
+    utter.onend = utter.onerror = () => btn && btn.classList.remove('speaking');
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+  }
+
+  const voices = window.speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    doSpeak();
+  } else {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.onvoiceschanged = null;
+      doSpeak();
+    };
+  }
+}
+
+// ── Light/dark toggle ──
+function toggleMode() {
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('btnMode').textContent = isLight ? '🌙' : '☀';
+  try { localStorage.setItem('vocab-mode', isLight ? 'light' : 'dark'); } catch(e) {}
+}
+
+// Init
+renderCard();
+
+// Restore saved mode preference
+try {
+  if (localStorage.getItem('vocab-mode') === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('btnMode').textContent = '🌙';
+  }
+} catch(e) {}
+</script>
+</body>
+</html>
