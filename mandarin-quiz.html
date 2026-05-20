@@ -596,6 +596,8 @@ body.light .divider { background: rgba(0,0,0,0.07); }
   .top-bar { margin-bottom: 20px; }
 }
 </style>
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon.svg">
 </head>
 <body>
 <div class="app">
@@ -1487,6 +1489,14 @@ document.addEventListener('keydown', e => {
 // ═══════════════════════════════════════════════════════════════
 initTheme();
 render();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .catch(err => console.warn('SW registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>

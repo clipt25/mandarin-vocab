@@ -668,6 +668,8 @@ body.light .drawer-chapter-list li.active button { color: #2a1a00; border-left-c
   .gloss-en { font-size: 0.7rem; }
 }
 </style>
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon.svg">
 </head>
 <body>
 
@@ -2306,6 +2308,14 @@ try {
     document.getElementById('btnMode').textContent = '🌙';
   }
 } catch(e) {}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .catch(err => console.warn('SW registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>
