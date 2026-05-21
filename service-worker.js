@@ -1,4 +1,4 @@
-const CACHE = 'mn-vocab-v1';
+const CACHE = 'mn-vocab-v2';
 const ASSETS = [
   './',
   './index.html',

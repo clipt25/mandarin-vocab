@@ -667,6 +667,23 @@ body.light .drawer-chapter-list li.active button { color: #2a1a00; border-left-c
   .gloss-py { font-size: 0.72rem; }
   .gloss-en { font-size: 0.7rem; }
 }
+
+/* ── Streak chip ── */
+.streak-chip {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 15px;
+  line-height: 1;
+  cursor: default;
+  user-select: none;
+  transition: opacity 200ms;
+}
+.streak-chip.zero { opacity: 0.35; }
+.streak-flame { font-size: 16px; line-height: 1; }
+.streak-count { font-size: 15px; font-weight: 400; color: #c8b99a; min-width: 14px; }
+body.light .streak-count { color: #8a6040; }
 </style>
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon.svg">
@@ -703,7 +720,11 @@ body.light .drawer-chapter-list li.active button { color: #2a1a00; border-left-c
           <a class="mode-btn inactive" href="./mandarin-quiz.html">Quiz</a>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="streak-chip zero" id="streakChip" title="Current streak">
+          <span class="streak-flame">🔥</span>
+          <span class="streak-count" id="streakCount">0</span>
+        </div>
         <button class="btn-mode" id="btnMode" onclick="toggleMode()" title="Toggle light/dark">☀</button>
         <span class="counter" id="counter">1 of 1</span>
       </div>
@@ -2298,6 +2319,29 @@ function toggleMode() {
   try { localStorage.setItem('vocab-mode', isLight ? 'light' : 'dark'); } catch(e) {}
 }
 
+// ── Streak (read-only display) ──
+const LS_STREAK_CURRENT = 'mn-streak-current';
+const LS_STREAK_BEST    = 'mn-streak-best';
+const LS_STREAK_DATE    = 'mn-streak-date';
+
+function getStreak() {
+  const lsGet = k => { try { return localStorage.getItem(k); } catch(e) { return null; } };
+  return {
+    current: parseInt(lsGet(LS_STREAK_CURRENT) || '0', 10),
+    best:    parseInt(lsGet(LS_STREAK_BEST)    || '0', 10),
+    date:    lsGet(LS_STREAK_DATE) || null,
+  };
+}
+
+function renderStreakChip() {
+  const s = getStreak();
+  const chip  = document.getElementById('streakChip');
+  const count = document.getElementById('streakCount');
+  if (!chip || !count) return;
+  count.textContent = s.current;
+  chip.classList.toggle('zero', s.current === 0);
+}
+
 // Init
 renderCard();
 
@@ -2308,6 +2352,8 @@ try {
     document.getElementById('btnMode').textContent = '🌙';
   }
 } catch(e) {}
+
+renderStreakChip();
 </script>
 <script>
 if ('serviceWorker' in navigator) {

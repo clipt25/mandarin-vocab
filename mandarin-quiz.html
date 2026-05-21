@@ -595,6 +595,45 @@ body.light .divider { background: rgba(0,0,0,0.07); }
   .results-score { font-size: 2.8rem; }
   .top-bar { margin-bottom: 20px; }
 }
+
+/* ── Streak chip ── */
+.streak-chip {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 15px;
+  line-height: 1;
+  cursor: default;
+  user-select: none;
+  transition: opacity 200ms;
+}
+.streak-chip.zero { opacity: 0.35; }
+.streak-flame { font-size: 16px; line-height: 1; }
+.streak-count { font-size: 15px; font-weight: 400; color: #c8b99a; min-width: 14px; }
+body.light .streak-count { color: #8a6040; }
+@keyframes streak-pulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+.streak-chip.just-increased .streak-flame { animation: streak-pulse 500ms ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .streak-chip.just-increased .streak-flame { animation: none; }
+}
+
+/* ── Results streak line ── */
+.results-streak {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 1rem;
+  color: #a89880;
+  margin-top: 6px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.results-streak strong { color: #c8b99a; }
+body.light .results-streak { color: #8a6040; }
+body.light .results-streak strong { color: #6a3010; }
 </style>
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon.svg">
@@ -607,7 +646,13 @@ body.light .divider { background: rgba(0,0,0,0.07); }
       <a class="mode-btn inactive" href="./mandarin-vocab.html">Flashcards</a>
       <span class="mode-btn active">Quiz</span>
     </div>
-    <button class="btn-mode" id="btnMode" onclick="toggleMode()" title="Toggle light/dark">☀</button>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="streak-chip zero" id="streakChip" title="Current streak">
+        <span class="streak-flame">🔥</span>
+        <span class="streak-count" id="streakCount">0</span>
+      </div>
+      <button class="btn-mode" id="btnMode" onclick="toggleMode()" title="Toggle light/dark">☀</button>
+    </div>
   </div>
 
   <!-- Dynamic content -->
@@ -1122,6 +1167,61 @@ const CHAPTERS = [
 ];
 
 // ═══════════════════════════════════════════════════════════════
+//  Streak
+// ═══════════════════════════════════════════════════════════════
+const LS_STREAK_CURRENT = 'mn-streak-current';
+const LS_STREAK_BEST    = 'mn-streak-best';
+const LS_STREAK_DATE    = 'mn-streak-date';
+
+function lsGet(k) { try { return localStorage.getItem(k); } catch(e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch(e) {} }
+
+function todayStr() {
+  return new Date().toLocaleDateString('en-CA');
+}
+
+function getStreak() {
+  return {
+    current: parseInt(lsGet(LS_STREAK_CURRENT) || '0', 10),
+    best:    parseInt(lsGet(LS_STREAK_BEST)    || '0', 10),
+    date:    lsGet(LS_STREAK_DATE) || null,
+  };
+}
+
+function recordActivity() {
+  const today = todayStr();
+  const s = getStreak();
+
+  if (s.date === today) return { current: s.current, best: s.best, increased: false };
+
+  let newCurrent;
+  if (s.date === null) {
+    newCurrent = 1;
+  } else {
+    const last = new Date(s.date);
+    const now  = new Date(today);
+    const diffDays = Math.round((now - last) / 86400000);
+    newCurrent = (diffDays === 1) ? s.current + 1 : 1;
+  }
+
+  const newBest = Math.max(newCurrent, s.best);
+  lsSet(LS_STREAK_CURRENT, String(newCurrent));
+  lsSet(LS_STREAK_BEST,    String(newBest));
+  lsSet(LS_STREAK_DATE,    today);
+
+  return { current: newCurrent, best: newBest, increased: newCurrent > s.current };
+}
+
+function renderStreakChip() {
+  const s = getStreak();
+  const chip  = document.getElementById('streakChip');
+  const count = document.getElementById('streakCount');
+  if (!chip || !count) return;
+  count.textContent = s.current;
+  chip.classList.toggle('zero', s.current === 0);
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  App state
 // ═══════════════════════════════════════════════════════════════
 const state = {
@@ -1335,11 +1435,13 @@ function renderQuizScreen() {
 function renderResultsScreen() {
   const total = state.questions.length;
   const pct = Math.round((state.score / total) * 100);
+  const s = getStreak();
   return `
     <div class="results-wrap">
       <p class="results-title">Results</p>
       <div class="results-score">${state.score} / ${total}</div>
       <div class="results-pct">${pct}% correct</div>
+      <p class="results-streak">🔥 <strong>${s.current}</strong> day streak &nbsp;·&nbsp; Best: <strong>${s.best}</strong></p>
       <div class="results-actions">
         <button class="btn-result primary" data-action="retry">Try again — same drill</button>
         <button class="btn-result ghost" data-action="change-drill">Change drill</button>
@@ -1470,8 +1572,19 @@ function handleAnswer(idx) {
     state.answered = false;
     if (state.currentIndex >= state.questions.length) {
       state.screen = 'results';
+      const result = recordActivity();
+      render();
+      if (result && result.increased) {
+        const chip = document.getElementById('streakChip');
+        if (chip) {
+          chip.classList.add('just-increased');
+          setTimeout(() => chip.classList.remove('just-increased'), 600);
+        }
+      }
+      renderStreakChip();
+    } else {
+      render();
     }
-    render();
   }, delay);
 }
 
@@ -1489,6 +1602,7 @@ document.addEventListener('keydown', e => {
 // ═══════════════════════════════════════════════════════════════
 initTheme();
 render();
+renderStreakChip();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
