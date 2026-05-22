@@ -1254,6 +1254,7 @@ const CHAPTERS = [
 const LS_STREAK_CURRENT = 'mn-streak-current';
 const LS_STREAK_BEST    = 'mn-streak-best';
 const LS_STREAK_DATE    = 'mn-streak-date';
+const LS_MN_SETTINGS    = 'mn-vocab-settings';
 const LS_GH_TOKEN_MN    = 'mn-vocab-gh-token';
 const LS_GH_GIST_MN     = 'mn-vocab-gh-gist';
 const GIST_FILENAME_MN  = 'mandarin-settings.json';
@@ -1293,6 +1294,14 @@ function recordActivity() {
   lsSet(LS_STREAK_CURRENT, String(newCurrent));
   lsSet(LS_STREAK_BEST,    String(newBest));
   lsSet(LS_STREAK_DATE,    today);
+  // Also write to mn-vocab-settings so vocab app's syncNow() picks up the streak
+  try {
+    const raw = lsGet(LS_MN_SETTINGS);
+    const obj = raw ? JSON.parse(raw) : { version: 1, settings: {} };
+    if (!obj.settings) obj.settings = {};
+    obj.settings.streak = { current: newCurrent, best: newBest, date: today };
+    lsSet(LS_MN_SETTINGS, JSON.stringify(obj));
+  } catch(e) {}
 
   return { current: newCurrent, best: newBest, increased: newCurrent > s.current };
 }
@@ -1376,6 +1385,14 @@ async function syncStreakFromGist() {
         lsSet(LS_STREAK_CURRENT, String(merged.current || 0));
         lsSet(LS_STREAK_BEST,    String(merged.best || 0));
         if (merged.date) lsSet(LS_STREAK_DATE, merged.date);
+        // Also update mn-vocab-settings so vocab app syncNow() sees the pulled streak
+        try {
+          const raw = lsGet(LS_MN_SETTINGS);
+          const obj = raw ? JSON.parse(raw) : { version: 1, settings: {} };
+          if (!obj.settings) obj.settings = {};
+          obj.settings.streak = merged;
+          lsSet(LS_MN_SETTINGS, JSON.stringify(obj));
+        } catch(e) {}
       }
     }
     renderStreakChip();

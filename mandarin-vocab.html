@@ -2746,6 +2746,18 @@ async function syncNow() {
   setSyncStatus('syncing');
   try {
     const local = getMnSettingsRaw() || { version: 1, settings: {} };
+    // Re-merge standalone streak keys before syncing — quiz app only writes these,
+    // not mn-vocab-settings, so getMnSettingsRaw() alone would return a stale streak.
+    const standaloneStreak = {
+      current: parseInt(lsGet(LS_STREAK_CURRENT) || '0', 10),
+      best:    parseInt(lsGet(LS_STREAK_BEST)    || '0', 10),
+      date:    lsGet(LS_STREAK_DATE) || null,
+    };
+    if (standaloneStreak.date) {
+      if (!local.settings) local.settings = {};
+      const sm = mergeStreak((local.settings || {}).streak, standaloneStreak);
+      if (sm) { local.settings.streak = sm; saveMnSettingsRaw(local); }
+    }
     const remote = await ghPullMnSettings();
     if (remote) {
       const remoteStreak = remote.settings && remote.settings.streak;
