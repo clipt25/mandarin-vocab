@@ -10,6 +10,8 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html { overflow-x: hidden; max-width: 100%; }
+
 body {
   font-family: 'Crimson Pro', Georgia, serif;
   background: #0e0d0b;
@@ -131,9 +133,28 @@ body {
   width: 100%;
   max-width: 480px;
   display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 auto 24px;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+.top-bar-r1 {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 32px;
+}
+.top-bar-r1-left,
+.top-bar-r1-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.top-bar-r2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 .site-label {
   font-size: 12px;
@@ -313,6 +334,8 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-top: 20px;
+  box-sizing: border-box;
+  padding: 0 12px;
 }
 .nav-progress {
   font-size: 13px;
@@ -919,25 +942,31 @@ body.light .btn-ghost-sm:hover { border-color: rgba(100,70,40,0.6); color: #3a1e
   <!-- Main -->
   <main class="main">
     <div class="top-bar">
-      <div style="display:flex;align-items:center;gap:8px">
-        <button class="btn-hamburger" onclick="openDrawer()" title="All chapters">&#9776;</button>
-        <button class="btn-hamburger btn-wordlist" onclick="openWordDrawer()" title="Words in this chapter">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
-        </button>
-        <div class="mode-switcher">
-          <span class="mode-btn active">Flashcards</span>
-          <a class="mode-btn inactive" href="./mandarin-quiz.html">Quiz</a>
+      <!-- Row 1: hamburgers left | controls right -->
+      <div class="top-bar-r1">
+        <div class="top-bar-r1-left">
+          <button class="btn-hamburger" onclick="openDrawer()" title="All chapters">&#9776;</button>
+          <button class="btn-hamburger btn-wordlist" onclick="openWordDrawer()" title="Words in this chapter">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="top-bar-r1-right">
+          <span class="sync-status off" id="syncStatus" onclick="syncNow()" title="Click to sync now"></span>
+          <button class="btn-settings" onclick="openSettings()" title="Settings" aria-label="Settings">⚙</button>
+          <button class="btn-mode" id="btnMode" onclick="toggleMode()" title="Toggle light/dark">☀</button>
+          <span class="counter" id="counter">1 of 1</span>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
+      <!-- Row 2: streak left | tab switcher right -->
+      <div class="top-bar-r2">
         <div class="streak-chip zero" id="streakChip" title="Current streak">
           <span class="streak-flame">🔥</span>
           <span class="streak-count" id="streakCount">0</span>
         </div>
-        <span class="sync-status off" id="syncStatus" onclick="syncNow()" title="Click to sync now"></span>
-        <button class="btn-settings" onclick="openSettings()" title="Settings" aria-label="Settings">⚙</button>
-        <button class="btn-mode" id="btnMode" onclick="toggleMode()" title="Toggle light/dark">☀</button>
-        <span class="counter" id="counter">1 of 1</span>
+        <div class="mode-switcher">
+          <span class="mode-btn active">Flashcards</span>
+          <a class="mode-btn inactive" href="./mandarin-quiz.html">Quiz</a>
+        </div>
       </div>
     </div>
 
