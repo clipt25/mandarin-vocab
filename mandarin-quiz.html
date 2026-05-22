@@ -634,6 +634,87 @@ body.light .streak-count { color: #8a6040; }
 .results-streak strong { color: #c8b99a; }
 body.light .results-streak { color: #8a6040; }
 body.light .results-streak strong { color: #6a3010; }
+
+/* ── Example sentence reveal (correct answer) ── */
+.example-reveal {
+  opacity: 0;
+  transition: opacity 250ms ease;
+  pointer-events: none;
+  margin-top: 24px;
+}
+.example-reveal.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.example-divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 16px;
+}
+body.light .example-divider { border-top-color: rgba(0,0,0,0.1); }
+.example-ch {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: #e8e2d9;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 6px;
+}
+body.light .example-ch { color: #1a0e00; }
+.example-pin {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 0.88rem;
+  font-style: italic;
+  color: #a89880;
+  text-align: center;
+  margin-bottom: 6px;
+}
+body.light .example-pin { color: #8a6040; }
+.example-en {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: #6b5e45;
+  text-align: center;
+}
+body.light .example-en { color: #7a5030; }
+
+/* ── Next button (correct answer) ── */
+.btn-next {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  padding: 12px 0;
+  margin: 20px auto 0;
+  width: calc(100% - 40px);
+  max-width: 420px;
+  background: transparent;
+  border: 1px solid rgba(200,185,154,0.35);
+  border-radius: 8px;
+  color: #c8b99a;
+  cursor: pointer;
+  display: block;
+  transition: border-color 150ms, color 150ms;
+}
+.btn-next:hover { border-color: #c8b99a; color: #e8d9ba; }
+body.light .btn-next { border-color: rgba(100,70,40,0.3); color: #8a6040; }
+body.light .btn-next:hover { border-color: #8a6040; color: #5a3010; }
+
+/* ── Quiz sync badge ── */
+.quiz-sync-badge {
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: #a89880;
+  opacity: 0.8;
+  white-space: nowrap;
+  transition: opacity 600ms;
+}
+.quiz-sync-badge.synced { color: #a89880; }
+.quiz-sync-badge.failed { color: #c8964a; }
+body.light .quiz-sync-badge.synced { color: #8a6040; }
+body.light .quiz-sync-badge.failed { color: #b06020; }
 </style>
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon.svg">
@@ -643,7 +724,7 @@ body.light .results-streak strong { color: #6a3010; }
   <!-- Top bar -->
   <div class="top-bar">
     <div class="mode-switcher">
-      <a class="mode-btn inactive" href="./mandarin-vocab.html">Flashcards</a>
+      <a class="mode-btn inactive" href="./index.html">Flashcards</a>
       <span class="mode-btn active">Quiz</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
@@ -651,6 +732,7 @@ body.light .results-streak strong { color: #6a3010; }
         <span class="streak-flame">🔥</span>
         <span class="streak-count" id="streakCount">0</span>
       </div>
+      <span class="quiz-sync-badge" id="quizSyncBadge" hidden></span>
       <button class="btn-mode" id="btnMode" onclick="toggleMode()" title="Toggle light/dark">☀</button>
     </div>
   </div>
@@ -1172,6 +1254,9 @@ const CHAPTERS = [
 const LS_STREAK_CURRENT = 'mn-streak-current';
 const LS_STREAK_BEST    = 'mn-streak-best';
 const LS_STREAK_DATE    = 'mn-streak-date';
+const LS_GH_TOKEN_MN    = 'mn-vocab-gh-token';
+const LS_GH_GIST_MN     = 'mn-vocab-gh-gist';
+const GIST_FILENAME_MN  = 'mandarin-settings.json';
 
 function lsGet(k) { try { return localStorage.getItem(k); } catch(e) { return null; } }
 function lsSet(k, v) { try { localStorage.setItem(k, v); } catch(e) {} }
@@ -1219,6 +1304,85 @@ function renderStreakChip() {
   if (!chip || !count) return;
   count.textContent = s.current;
   chip.classList.toggle('zero', s.current === 0);
+}
+
+// ── Read-only Gist streak sync ──
+function mergeStreak(a, b) {
+  a = a || {}; b = b || {};
+  if (!a.date && !b.date) return null;
+  let primary;
+  if (!a.date) primary = b;
+  else if (!b.date) primary = a;
+  else primary = (a.date >= b.date) ? a : b;
+  return {
+    current: parseInt(primary.current || 0, 10),
+    date:    primary.date,
+    best:    Math.max(parseInt(a.best || 0, 10), parseInt(b.best || 0, 10),
+                      parseInt(a.current || 0, 10), parseInt(b.current || 0, 10)),
+  };
+}
+
+function ghHeadersMn() {
+  return {
+    'Authorization': 'Bearer ' + lsGet(LS_GH_TOKEN_MN),
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    'Content-Type': 'application/json'
+  };
+}
+
+async function ghPullMnSettings() {
+  const token = lsGet(LS_GH_TOKEN_MN), gistId = lsGet(LS_GH_GIST_MN);
+  if (!token || !gistId) return null;
+  const res = await fetch('https://api.github.com/gists/' + gistId, { headers: ghHeadersMn() });
+  if (!res.ok) return null;
+  const data = await res.json();
+  const file = data.files && data.files[GIST_FILENAME_MN];
+  if (!file) return null;
+  let content = file.content;
+  if (file.truncated && file.raw_url) {
+    const r2 = await fetch(file.raw_url);
+    if (!r2.ok) return null;
+    content = await r2.text();
+  }
+  try { return JSON.parse(content); } catch(e) { return null; }
+}
+
+async function syncStreakFromGist() {
+  const badge = document.getElementById('quizSyncBadge');
+  if (!lsGet(LS_GH_TOKEN_MN) || !lsGet(LS_GH_GIST_MN)) return;
+
+  const showBadge = (cls, glyph, title, autohide) => {
+    if (!badge) return;
+    badge.textContent = glyph;
+    badge.title = title;
+    badge.className = 'quiz-sync-badge ' + cls;
+    badge.hidden = false;
+    if (autohide) setTimeout(() => { badge.hidden = true; }, 4000);
+  };
+
+  try {
+    const remote = await Promise.race([
+      ghPullMnSettings(),
+      new Promise(r => setTimeout(() => r(null), 3000))
+    ]);
+    if (!remote) { showBadge('failed', '⚠', 'Sync failed — check your token', false); return; }
+
+    const remoteStreak = remote.settings && remote.settings.streak;
+    if (remoteStreak) {
+      const localStreak = getStreak();
+      const merged = mergeStreak(localStreak, remoteStreak);
+      if (merged && JSON.stringify(merged) !== JSON.stringify({ current: localStreak.current, date: localStreak.date, best: localStreak.best })) {
+        lsSet(LS_STREAK_CURRENT, String(merged.current || 0));
+        lsSet(LS_STREAK_BEST,    String(merged.best || 0));
+        if (merged.date) lsSet(LS_STREAK_DATE, merged.date);
+      }
+    }
+    renderStreakChip();
+    showBadge('synced', '✓', 'Synced with Gist', true);
+  } catch(e) {
+    showBadge('failed', '⚠', 'Sync failed — check your token', false);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1428,7 +1592,14 @@ function renderQuizScreen() {
       <div class="progress-bar-fill" style="width:${pct}%"></div>
     </div>
     <div class="question-display">${questionHtml}</div>
-    <div class="options">${optionsHtml}</div>`;
+    <div class="options">${optionsHtml}</div>
+    <div class="example-reveal" id="exampleReveal">
+      <hr class="example-divider">
+      <p class="example-ch" id="exampleCh"></p>
+      <p class="example-pin" id="examplePin"></p>
+      <p class="example-en" id="exampleEn"></p>
+    </div>
+    <button class="btn-next" id="btnNext" hidden onclick="advanceFromNext()">Next →</button>`;
 }
 
 // ── Screen 4: Results ────────────────────────────────────────
@@ -1540,6 +1711,35 @@ function attachHandlers() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//  Question advancement
+// ═══════════════════════════════════════════════════════════════
+function advanceQuestion() {
+  state.currentIndex++;
+  state.answered = false;
+  if (state.currentIndex >= state.questions.length) {
+    state.screen = 'results';
+    const result = recordActivity();
+    render();
+    if (result && result.increased) {
+      const chip = document.getElementById('streakChip');
+      if (chip) {
+        chip.classList.add('just-increased');
+        setTimeout(() => chip.classList.remove('just-increased'), 600);
+      }
+    }
+    renderStreakChip();
+  } else {
+    render();
+  }
+}
+
+function advanceFromNext() {
+  const btnNext = document.getElementById('btnNext');
+  if (btnNext) btnNext.hidden = true;
+  advanceQuestion();
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  Answer handling
 // ═══════════════════════════════════════════════════════════════
 function handleAnswer(idx) {
@@ -1565,34 +1765,38 @@ function handleAnswer(idx) {
     });
   }
 
-  const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 300 : 800;
-
-  setTimeout(() => {
-    state.currentIndex++;
-    state.answered = false;
-    if (state.currentIndex >= state.questions.length) {
-      state.screen = 'results';
-      const result = recordActivity();
-      render();
-      if (result && result.increased) {
-        const chip = document.getElementById('streakChip');
-        if (chip) {
-          chip.classList.add('just-increased');
-          setTimeout(() => chip.classList.remove('just-increased'), 600);
-        }
-      }
-      renderStreakChip();
-    } else {
-      render();
+  if (correct) {
+    const word = q.word;
+    if (word.ex) {
+      const rev   = document.getElementById('exampleReveal');
+      const chEl  = document.getElementById('exampleCh');
+      const pinEl = document.getElementById('examplePin');
+      const enEl  = document.getElementById('exampleEn');
+      if (chEl)  chEl.textContent  = word.ex;
+      if (pinEl) pinEl.textContent = word.p;
+      if (enEl)  enEl.textContent  = word.exm || '';
+      if (rev)   rev.classList.add('visible');
     }
-  }, delay);
+    const btnNext = document.getElementById('btnNext');
+    if (btnNext) btnNext.hidden = false;
+  } else {
+    const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 300 : 800;
+    setTimeout(advanceQuestion, delay);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  Keyboard
 // ═══════════════════════════════════════════════════════════════
 document.addEventListener('keydown', e => {
-  if (state.screen !== 'quiz' || state.answered) return;
+  if (state.screen !== 'quiz') return;
+  if (state.answered) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const btnNext = document.getElementById('btnNext');
+      if (btnNext && !btnNext.hidden) { e.preventDefault(); advanceFromNext(); }
+    }
+    return;
+  }
   const map = { a: 0, b: 1, c: 2, d: 3, A: 0, B: 1, C: 2, D: 3 };
   if (map[e.key] !== undefined) handleAnswer(map[e.key]);
 });
@@ -1603,6 +1807,7 @@ document.addEventListener('keydown', e => {
 initTheme();
 render();
 renderStreakChip();
+syncStreakFromGist();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
